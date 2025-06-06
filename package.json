@@ -1,0 +1,19 @@
+{
+  "name": "projetocap11",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-handlebars": "^8.0.3",
+    "mongoose": "^8.15.0",
+    "pg": "^8.16.0",
+    "sequelize": "^6.37.7"
+  }
+}
