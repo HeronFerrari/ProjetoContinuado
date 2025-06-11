@@ -8,10 +8,17 @@ module.exports = {
 
   async postCreate(req, res) {
     try {
-      await db.Categoria.create(req.body);
+      if (!req.body.nome || !req.body.tipo) {
+        return res.status(400).send('Nome e tipo são obrigatórios');
+      }
+      await db.Categoria.create({
+        nome: req.body.nome,
+        tipo: req.body.tipo
+      });
       res.redirect('/home');
     } catch (err) {
       console.log(err);
+      res.status(500).send('Erro ao criar categoria');
     }
   },
 
@@ -29,9 +36,13 @@ module.exports = {
   async getUpdate(req, res) {
     try {
       const categoria = await db.Categoria.findByPk(req.params.id_categoria);
+      if (!categoria) {
+        return res.status(404).send('Categoria não encontrada');
+      }
       res.render('categoria/categoriaUpdate', { categoria: categoria.dataValues });
     } catch (err) {
       console.log(err);
+      res.status(500).send('Erro ao buscar categoria para atualização');
     }
   },
 
@@ -41,6 +52,7 @@ module.exports = {
       res.redirect('/home');
     } catch (err) {
       console.log(err);
+      res.status(500).send('Erro ao atualizar categoria');
     }
   },
 
@@ -50,6 +62,7 @@ module.exports = {
       res.redirect('/home');
     } catch (err) {
       console.log(err);
+      res.status(500).send('Erro ao excluir categoria');
     }
   }
 };

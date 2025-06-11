@@ -21,7 +21,7 @@ db.Emprestimo = require('../models/relational/emprestimo')(sequelize, Sequelize)
 db.Reserva = require('../models/relational/reserva')(sequelize, Sequelize);
 
 // Categoria 1:N Livro
-db.Categoria.hasMany(db.Livro, { foreignKey: 'id_categoria', onDelete: 'NO ACTION ' });
+db.Categoria.hasMany(db.Livro, { foreignKey: 'id_categoria', onDelete: 'NO ACTION' });
 db.Livro.belongsTo(db.Categoria, { foreignKey: 'id_categoria' });
 
 // Livro N:N Autor (via LivroAutor)

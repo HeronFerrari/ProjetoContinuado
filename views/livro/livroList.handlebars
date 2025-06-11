@@ -1,0 +1,23 @@
+<h1>Lista de Livros</h1>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Título</th>
+      <th>Ano</th>
+      <th>Gênero</th>
+      <th>Tipo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each livros}}
+      <tr>
+        <td>{{toUpperCase livro.titulo}}</td>
+        <td>{{livro.ano}}</td>
+        <td>{{Categoria.nome}}</td>
+        <td>{{Categoria.tipo}}</td>
+        <td><a href="/livroUpdate/{{id_livro}}">Editar</a></td>
+        <td><a href="/livroDelete/{{id_livro}}">Deletar</a></td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

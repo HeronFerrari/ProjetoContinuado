@@ -4,6 +4,7 @@ const db = require('../config/db_sequelize');
 const controllerUsuario = require('../controllers/controllerUsuario');
 const controllerComentario = require('../controllers/controllerComentario');
 const controllerCategoria = require('../controllers/controllerCategoria');
+const controllerLivro = require('../controllers/controllerLivro');
 const route = express.Router();
 
 /* db.sequelize.sync({ force: true }).then(() => {
@@ -39,7 +40,13 @@ route.get('/comentarioCreate', controllerComentario.getCreate);
 route.post('/comentarioCreate', controllerComentario.postCreate);
 route.get('/comentarioList', controllerComentario.getList);
 
-
+// Controller Livro
+route.get('/livroCreate', controllerLivro.getCreate);
+route.post('/livroCreate', controllerLivro.postCreate);
+route.get('/livroList', controllerLivro.getList);
+route.get('/livroUpdate/:id', controllerLivro.getUpdate);
+route.post('/livroUpdate', controllerLivro.postUpdate);
+route.get('/livroDelete/:id', controllerLivro.getDelete);
 /*codigo do professor, não adaptado para o meu código
 
 // Controller Receita

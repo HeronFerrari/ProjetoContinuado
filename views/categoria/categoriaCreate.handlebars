@@ -1,5 +1,9 @@
-<form action="/categoriaCreate" method="post">
-  Nome: <input type="text" name="nome">
-  <br><br>
-  <input type="submit" value="Cadastrar">
+<form method="POST" action="/categoriaCreate">
+  <label for="nome">Nome:</label>
+  <input type="text" name="nome" id="nome" required>
+
+  <label for="tipo">Tipo:</label>
+  <input type="text" name="tipo" id="tipo" required>
+  
+  <button type="submit">Cadastrar Categoria</button>
 </form>

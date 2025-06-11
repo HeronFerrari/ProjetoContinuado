@@ -1,0 +1,12 @@
+<form action="/livroUpdate" method="post">
+  <input type="hidden" name="id_livro" value="{{livro.id_livro}}">
+  Título: <input type="text" name="titulo" value="{{livro.titulo}}"><br>
+  Ano: <input type="number" name="ano" value="{{livro.ano}}"><br>
+  Categoria:
+  <select name="id_categoria">
+    {{#each categorias}}
+      <option value="{{id_categoria}}" {{#ifCond id_categoria ../livro.id_categoria}}selected{{/ifCond}}>{{nome}}</option>
+    {{/each}}
+  </select><br>
+  <input type="submit" value="Editar">
+</form>
