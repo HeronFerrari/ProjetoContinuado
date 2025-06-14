@@ -49,6 +49,8 @@ mongoose.connect (db_mongoose.connection)
      // Busca todos usuários e livros do PostgreSQL
       const usuarios = await db.Usuario.findAll();
       const livros = await db.Livro.findAll();
+      const autores = await db.Autor.findAll();
+      const livroAutores = await db.LivroAutor.findAll();
 
       // Cria mapas para acesso rápido por ID
       const usuariosMap = {};
@@ -57,11 +59,23 @@ mongoose.connect (db_mongoose.connection)
       const livrosMap = {};
       livros.forEach(l => { livrosMap[l.id_livro] = l; });
 
+      const autoresMap = {};
+      autores.forEach(a => { autoresMap[a.id_autor] = a; });
+
+      // Mapeia autores de cada livro
+      const livroAutoresMap = {};
+      livroAutores.forEach(la => {
+        if (!livroAutoresMap[la.id_livro]) livroAutoresMap[la.id_livro] = [];
+          livroAutoresMap[la.id_livro].push(autoresMap[la.id_autor]?.nome);
+      });
+
+
      // Adiciona nome do usuário e título do livro em cada comentário
       const comentariosComNomes = comentarios.map(coment => ({
         ...coment,
         usuario_nome: usuariosMap[coment.id_usuario]?.login || 'Desconhecido',
-        livro_titulo: livrosMap[coment.id_livro]?.titulo || 'Desconhecido'
+        livro_titulo: livrosMap[coment.id_livro]?.titulo || 'Desconhecido',
+        autor: (livroAutoresMap[coment.id_livro] || []).join(', ')
       }));
 
       res.render('comentario/comentarioList', {
