@@ -49,7 +49,8 @@ module.exports = {
         try {
         const livros = await db.Livro.findAll({
             include: [{
-            model: db.Categoria,
+            model: db.Categoria, 
+            as: 'Categoria',
             attributes: ['id_categoria', 'nome', 'tipo'] 
             }]
         });
@@ -108,7 +109,7 @@ module.exports = {
           ano: req.body.ano, 
           id_categoria: req.body.id_categoria 
         },
-        { where: { id: req.body.id } });
+        { where: { id_livro: req.body.id_livro } });
       res.redirect('/livroList');
 
     } catch (err) {
@@ -116,6 +117,7 @@ module.exports = {
       res.status(500).send("Erro ao atualizar livro.");
     }
   },
+
   async getDelete(req, res) {
     try {
       const livro = await db.Livro.findByPk(req.params.id);

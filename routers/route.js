@@ -7,6 +7,7 @@ const controllerCategoria = require('../controllers/controllerCategoria');
 const controllerLivro = require('../controllers/controllerLivro');
 const route = express.Router();
 
+//criando as tabelas e usuarios no banco de dados
 /* db.sequelize.sync({ force: true }).then(() => {
   console.log('{ force: true }');
 }); */
@@ -49,7 +50,7 @@ route.post('/livroUpdate', controllerLivro.postUpdate);
 route.get('/livroDelete/:id', controllerLivro.getDelete);
 /*codigo do professor, não adaptado para o meu código
 
-// Controller Receita
+// Controller Receita do projeto do professor -- pode ignorar
 route.get('/receitaCreate', controllerReceita.getCreate);
 route.post('/receitaCreate', controllerReceita.postCreate);
 route.get('/receitaList', controllerReceita.getList);

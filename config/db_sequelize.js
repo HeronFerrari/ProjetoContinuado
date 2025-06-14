@@ -22,7 +22,7 @@ db.Reserva = require('../models/relational/reserva')(sequelize, Sequelize);
 
 // Categoria 1:N Livro
 db.Categoria.hasMany(db.Livro, { foreignKey: 'id_categoria', onDelete: 'NO ACTION' });
-db.Livro.belongsTo(db.Categoria, { foreignKey: 'id_categoria' });
+db.Livro.belongsTo(db.Categoria, { foreignKey: 'id_categoria', as: 'Categoria' });
 
 // Livro N:N Autor (via LivroAutor)
 db.Livro.belongsToMany(db.Autor, { through: db.LivroAutor, foreignKey: 'id_livro' });

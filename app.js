@@ -18,9 +18,13 @@ app.engine ('handlebars', handlebars.engine ({
         },
         ifCond: function (v1, v2, options) {
             return (v1 == v2) ? options.fn(this) : options.inverse(this);
-    }
+        },
+        json: function(context) {
+            return JSON.stringify(context, null, 2);
+        }
     }
 }));
+
 app.set ('view engine','handlebars');
 app.set('views', __dirname + '/views');
 app.use (express.json ());

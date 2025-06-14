@@ -1,11 +1,17 @@
 <form action="/comentarioCreate" method="post">
-  Texto: <input type="text" name="texto" required>
-  <br><br>
-  Título: <input type="text" name="titulo" required>
-  <br><br>
-  ID do Usuário: <input type="number" name="id_usuario" required>
-  <br><br>
-  ID do Livro: <input type="number" name="id_livro" required>
-  <br><br>
+  Texto: <input type="text" name="texto" required><br><br>
+  Título: <input type="text" name="titulo" required><br><br>
+  Usuário:
+  <select name="id_usuario" required>
+    {{#each usuarios}}
+      <option value="{{id}}">{{login}}</option>
+    {{/each}}
+  </select><br><br>
+  Livro:
+  <select name="id_livro" required>
+    {{#each livros}}
+      <option value="{{id_livro}}">{{titulo}}</option>
+    {{/each}}
+  </select><br><br>
   <input type="submit" value="Cadastrar">
 </form>

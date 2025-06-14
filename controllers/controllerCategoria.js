@@ -62,7 +62,13 @@ module.exports = {
       res.redirect('/categoriaList');
     } catch (err) {
       console.log(err);
-      res.status(500).send('Erro ao excluir categoria');
+      //notifica usuario
+      let errorMessage = 'Não é possível excluir a categoria, pois ela está associada a livros ou comentários.';
+      res.render('categoria/categoriaList',{
+        categorias: (await db.Categoria.findAll()).map(catg => catg.toJSON()),
+        error: errorMessage
+      });
     }
   }
-};
+
+}

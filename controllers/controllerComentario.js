@@ -1,6 +1,7 @@
 const mongoose = require ('mongoose');
 const db_mongoose = require ('../config/db_mongoose');
 const Comentario = require ('../models/noSql/comentario');
+const db = require ('../config/db_sequelize'); 
 
 mongoose.connect (db_mongoose.connection)
 .then (() => {
@@ -11,35 +12,65 @@ mongoose.connect (db_mongoose.connection)
 });
 
  module.exports = {
-  async getCreate (req, res) {
-    res.render ('comentario/comentarioCreate');
- },
+
+    async getCreate (req, res) {
+      try {
+        const usuarios = await db.Usuario.findAll();
+        const livros = await db.Livro.findAll();
+        res.render ('comentario/comentarioCreate',{
+        usuarios: usuarios.map(u => u.toJSON()),
+        livros: livros.map(l => l.toJSON())
+      });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao buscar usuários ou livros.");
+ }
+},
 
   async postCreate (req, res) {
-    new Comentario({
-    texto: req.body.texto,
-    titulo: req.body.titulo,
-    id_usuario: req.body.id_usuario,
-    id_livro: req.body.id_livro
-  })
-  .save()
-  .then (() => {
+    try {
+      await new Comentario({
+      texto: req.body.texto,
+      titulo: req.body.titulo,
+      id_usuario: req.body.id_usuario,
+      id_livro: req.body.id_livro
+    }).save()
     res.redirect ('/home');
- })
- .catch ((err) => {
+  } catch (err) {
     console.log (err);
     res.status(400).send("Erro ao criar comentário: " + err.message);
-  });
+  }
   },
+
  async getList(req, res) {
-    await Comentario.find()
-    .then(comentarios => {
+  try{
+    const comentarios = await Comentario.find().lean();
+
+     // Busca todos usuários e livros do PostgreSQL
+      const usuarios = await db.Usuario.findAll();
+      const livros = await db.Livro.findAll();
+
+      // Cria mapas para acesso rápido por ID
+      const usuariosMap = {};
+      usuarios.forEach(u => { usuariosMap[u.id] = u; });
+
+      const livrosMap = {};
+      livros.forEach(l => { livrosMap[l.id_livro] = l; });
+
+     // Adiciona nome do usuário e título do livro em cada comentário
+      const comentariosComNomes = comentarios.map(coment => ({
+        ...coment,
+        usuario_nome: usuariosMap[coment.id_usuario]?.login || 'Desconhecido',
+        livro_titulo: livrosMap[coment.id_livro]?.titulo || 'Desconhecido'
+      }));
+
       res.render('comentario/comentarioList', {
-        comentarios: comentarios.map(coment => coment.toJSON())
-      }); 
-    })
-    .catch((err) => {
+        comentarios: comentariosComNomes,
+        id_usuario: req.session?.usuario?.id // ou outro local onde guarda o id do usuário logado
+      });
+    } catch (err) {
       console.log(err);
-    });
+      res.status(500).send("Erro ao listar comentários.");
+    }
   }
 }

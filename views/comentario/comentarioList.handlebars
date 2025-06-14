@@ -1,10 +1,21 @@
-{{#each comentarios }}
+{{#each comentarios}}
  <div>
-    <h1> <p> <b> Titulo: </b> {{ titulo }} </h1>
-    <h2> <p> <b> Autor: </b> {{ autor }} </h2>
+    <h1><b> Titulo: </b>{{ titulo }} </h1>
+    <h2><b> Usuário: </b>{{ usuario_nome }}</h2>
+    <h2><b> Livro: </b>{{ livro_titulo }}</h2>
+    <h2><b> Autor: </b>{{ autor }} </h2>
     <p> {{ texto }} </p>
-    <h3>  <b> Id livro:</b> {{ id_livro }} </h3>
-    <h3>  <b> Id usuario:</b> {{id_usuario}} </h3>
+    <h3> <b> Id livro:</b> {{ id_livro }} </h3>
+    <h3> <b> Id usuario:</b> {{id_usuario}} </h3>
  </div>
  <hr>
- {{/each }}
+   {{#ifCond id_usuario ../id_usuario}}
+    <a href="/comentarioDelete/{{id_comentario}}">Deletar</a>
+    <a href="/comentarioUpdate/{{id_comentario}}">Editar</a>
+   {{/ifCond}}
+   {{#ifCond id_usuario ../id_usuario}}
+      <a href="/livroList">Voltar</a>
+      {{else}}
+      <a href="/usuarioList">Voltar</a>
+   {{/ifCond}}
+ {{/each}}
