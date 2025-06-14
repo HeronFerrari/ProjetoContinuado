@@ -18,7 +18,7 @@ module.exports = route;
 route.get('/home', (req, res) => res.render('home'));
 
 // Controller Usuario
-route.get('/', controllerUsuario.getLogin);
+route.get('/login', controllerUsuario.getLogin);
 route.post('/login', controllerUsuario.postLogin);
 route.get('/usuarioCreate', controllerUsuario.getCreate);
 route.post('/usuarioCreate', controllerUsuario.postCreate);
@@ -31,9 +31,9 @@ route.get('/usuarioDelete/:id', controllerUsuario.getDelete);
 route.get('/categoriaCreate', controllerCategoria.getCreate);
 route.post('/categoriaCreate', controllerCategoria.postCreate);
 route.get('/categoriaList', controllerCategoria.getList);
-route.get('/categoriaUpdate/:id', controllerCategoria.getUpdate);
+route.get('/categoriaUpdate/:id_categoria', controllerCategoria.getUpdate);
 route.post('/categoriaUpdate', controllerCategoria.postUpdate);
-route.get('/categoriaDelete/:id', controllerCategoria.getDelete);
+route.get('/categoriaDelete/:id_categoria', controllerCategoria.getDelete);
 
 // Controller Comentario
 route.get('/comentarioCreate', controllerComentario.getCreate);

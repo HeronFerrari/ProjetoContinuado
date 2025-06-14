@@ -14,7 +14,7 @@ app.engine ('handlebars', handlebars.engine ({
             });
         },
         toUpperCase: function (text) {
-            return text.toUpperCase();
+            return (text || '').toUpperCase();
         },
         ifCond: function (v1, v2, options) {
             return (v1 == v2) ? options.fn(this) : options.inverse(this);

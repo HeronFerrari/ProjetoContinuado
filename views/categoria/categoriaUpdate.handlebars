@@ -1,7 +1,8 @@
-<form action ="/categoriaUpdate" method ="post">
-    <input type ="hidden" name ="id" value ={{ categoria.id }} >
-        Nome: <input type ="text" name ="nome" value ="{{ categoria.nome }}">
-    <br> <br>
-    
-    <input type ="submit" value ="Editar">
+<form action="/categoriaUpdate" method="post">
+    <input type="hidden" name="id_categoria" value="{{categoria.id_categoria}}">
+    Nome: <input type="text" name="nome" value="{{categoria.nome}}">
+    <br><br>
+    Tipo: <input type="text" name="tipo" value="{{categoria.tipo}}">
+    <br><br>
+    <input type="submit" value="Editar">
 </form>

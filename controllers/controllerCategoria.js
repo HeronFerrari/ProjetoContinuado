@@ -15,7 +15,7 @@ module.exports = {
         nome: req.body.nome,
         tipo: req.body.tipo
       });
-      res.redirect('/home');
+      res.redirect('/categoriaCreate');
     } catch (err) {
       console.log(err);
       res.status(500).send('Erro ao criar categoria');
@@ -39,7 +39,7 @@ module.exports = {
       if (!categoria) {
         return res.status(404).send('Categoria não encontrada');
       }
-      res.render('categoria/categoriaUpdate', { categoria: categoria.dataValues });
+      res.render('categoria/categoriaList', { categoria: categoria.dataValues });
     } catch (err) {
       console.log(err);
       res.status(500).send('Erro ao buscar categoria para atualização');
@@ -49,7 +49,7 @@ module.exports = {
   async postUpdate(req, res) {
     try {
       await db.Categoria.update(req.body, { where: { id_categoria: req.body.id_categoria } });
-      res.redirect('/home');
+      res.redirect('/categoriaList');
     } catch (err) {
       console.log(err);
       res.status(500).send('Erro ao atualizar categoria');
@@ -59,7 +59,7 @@ module.exports = {
   async getDelete(req, res) {
     try {
       await db.Categoria.destroy({ where: { id_categoria: req.params.id_categoria } });
-      res.redirect('/home');
+      res.redirect('/categoriaList');
     } catch (err) {
       console.log(err);
       res.status(500).send('Erro ao excluir categoria');

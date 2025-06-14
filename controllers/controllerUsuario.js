@@ -4,24 +4,30 @@ const path = require ('path');
 
 module.exports = {
 
-async getLogin (req, res ) {
-res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
-},
+  async getLogin (req, res ) {
+  res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
+  },
 
   async postLogin(req, res) {
-    db.Usuario.findAll({
+   try {
+    const usuarios = await db.Usuario.findAll({
       where: {
         login: req.body.login,
         senha: req.body.senha
       }
-    }).then(usuarios => {
-      if (usuarios.length > 0)
-        res.render('home');
-      else
-        res.redirect('/');
-    }).catch((err) => {
-      console.log(err);
     });
+    if (usuarios.length > 0) {
+      res.redirect('/home');
+    } else {
+      res.render('usuario/login', {
+        layout: 'noMenu.handlebars',
+        error: "Usuário ou senha inválidos."
+      });
+    }
+  }  catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao tentar logar.");
+  }
   },
  
   async getCreate(req, res) {
@@ -34,7 +40,7 @@ res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
       senha: req.body.senha,
       tipo: req.body.tipo
     }).then(() => {
-      res.redirect('/home');
+      res.redirect('/usuarioCreate');
     }).catch((err) => {
       console.log(err);
     });
@@ -61,7 +67,7 @@ res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
   async postUpdate(req, res) {
     try {
       await db.Usuario.update(req.body, { where: { id: req.body.id } });
-      res.redirect('/home');
+      res.redirect('/usuarioList');
     } catch (err) {
       console.log(err);
     }
@@ -70,7 +76,7 @@ res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
   async getDelete(req, res) {
     try {
       await db.Usuario.destroy({ where: { id: req.params.id } });
-      res.redirect('/home');
+      res.redirect('/usuarioList');
     } catch (err) {
       console.log(err);
     }

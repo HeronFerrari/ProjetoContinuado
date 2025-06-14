@@ -1,16 +1,16 @@
 <table border ="1px">
     <tr>
-        <td> Login </td >
-        <td> Senha </td >
-        <td> Tipo </td >
+        <th colspan="3"> Login </th>
+        <th> Senha </th>
+        <th> Tipo </th>
     </tr>   
     {{#each usuarios }}
     <tr>    
-        <td>{{ login }} </td >
-        <td>{{ senha }} </td >
-        <td>{{ tipo }} </td >
-        <td><a href="usuarioUpdate/{{id_categoria}}">Editar</a></td>
-        <td><a href="usuarioDelete/{{id_categoria}}">Deletar</a></td>
+        <td colspan="3">{{ login }} </td >
+        <td>{{ senha }} </td>
+        <td>{{ tipo }} </td>
+        <td><a href="/usuarioUpdate/{{id}}">Editar</a></td>
+        <td><a href="/usuarioDelete/{{id}}">Deletar</a></td>
     </tr>
     {{/each}}
 </table>

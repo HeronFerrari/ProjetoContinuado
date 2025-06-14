@@ -81,6 +81,54 @@ module.exports = {
       console.log(err);
       res.status(500).send("Erro ao buscar livro para atualização.");
     }
+  },
+  async postUpdate(req, res) {
+    try {
+      // Validação simples
+      if (!req.body.titulo || !req.body.ano || !req.body.id_categoria) {
+        const categorias = await db.Categoria.findAll();
+        return res.status(400).render('livro/livroUpdate', {
+          livro: req.body,
+          categorias: categorias.map(cat => cat.toJSON()),
+          error: "Todos os campos são obrigatórios."
+        });
+      }
+      // Verifica se o ano é um número válido
+      if (isNaN(req.body.ano) || req.body.ano < 0) {
+        const categorias = await db.Categoria.findAll();
+        return res.status(400).render('livro/livroUpdate', {
+          livro: req.body,
+          categorias: categorias.map(cat => cat.toJSON()),
+          error: "Ano inválido."
+        });
+      }
+
+      await db.Livro.update(
+        { titulo: req.body.titulo, 
+          ano: req.body.ano, 
+          id_categoria: req.body.id_categoria 
+        },
+        { where: { id: req.body.id } });
+      res.redirect('/livroList');
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Erro ao atualizar livro.");
+    }
+  },
+  async getDelete(req, res) {
+    try {
+      const livro = await db.Livro.findByPk(req.params.id);
+      if (!livro) {
+        return res.status(404).send("Livro não encontrado.");
+      }
+      await livro.destroy();
+      res.redirect('/livroList');
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Erro ao deletar livro.");
+    }
   }
+
 
 };
