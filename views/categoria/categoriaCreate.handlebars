@@ -1,21 +1,10 @@
-<form action="/comentarioCreate" method="post">
-  Texto: <input type="text" name="texto" required>
+<h1>Criar Categoria</h1>
+<form action="/categoriaCreate" method="post">
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome" name="nome" required>
   <br><br>
-  Título: <input type="text" name="titulo" required>
-  <br><br>
-  Usuário:
-  <select name="id_usuario" required>
-    {{#each usuarios}}
-      <option value="{{id}}">{{login}}</option>
-    {{/each}}
-  </select>
-  <br><br>
-  Livro:
-  <select name="id_livro" required>
-    {{#each livros}}
-      <option value="{{id_livro}}">{{titulo}}</option>
-    {{/each}}
-  </select>
+  <label for="tipo">Tipo:</label>
+  <input type="text" id="tipo" name="tipo" required>
   <br><br>
   <input type="submit" value="Cadastrar">
 </form>

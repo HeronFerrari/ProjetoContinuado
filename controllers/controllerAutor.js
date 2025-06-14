@@ -38,5 +38,27 @@ module.exports = {
         console.log(err);
         res.status(500).send("Erro ao buscar autor para atualização.");
     }
-  }
+  },
+    async postUpdate(req, res) {
+        try {
+        await db.Autor.update(
+            { nome: req.body.nome },
+            { where: { id_autor: req.params.id_autor } }
+        );
+        res.redirect('/autorList');
+        } catch (err) {
+        console.log(err);
+        res.status(500).send("Erro ao atualizar autor.");
+        }
+    },
+    async getDelete(req, res) {
+        try {
+            await db.Autor.destroy({ where: { id_autor: req.params.id_autor } });
+            res.redirect('/autorList');
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("Erro ao excluir autor.");
+        }
+    }
+
 };

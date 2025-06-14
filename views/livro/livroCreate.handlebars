@@ -8,7 +8,9 @@
   <label for="id_categoria">Categoria:</label>
   <select name="id_categoria" id="id_categoria" required>
     {{#each categorias}}
-      <option value="{{id_categoria}}">{{nome}}</option>
+      <option value="{{id_categoria}}">
+        {{nome}} ({{ tipo }})
+      </option>
     {{/each}}
   </select>
 

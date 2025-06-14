@@ -1,0 +1,23 @@
+<h1>Lista de Autores</h1>
+<a href="/autorCreate">Novo Autor</a>
+<table border="1">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each autores}}
+      <tr>
+        <td>{{id_autor}}</td>
+        <td>{{nome}}</td>
+        <td>
+          <a href="/autorUpdate/{{id_autor}}">Editar</a>
+          <a href="/autorDelete/{{id_autor}}">Excluir</a>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
