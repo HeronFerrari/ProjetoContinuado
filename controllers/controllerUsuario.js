@@ -6,7 +6,9 @@ const usuario = require('../models/relational/usuario');
 module.exports = {
 
   async getLogin (req, res ) {
-  res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
+  res.render ('usuario/login', { 
+    hideMenu: true,
+    layout: 'noMenu.handlebars'});
   },
 
   async getLogout(req, res) {
@@ -54,7 +56,7 @@ module.exports = {
   async postCreate(req, res) {
    
     try {
-      const { login, senha, superior_login, superior_senha } = req.body;
+      const { login, senha, nome, sobrenome, idade, sexo, cidade, estado, nacionalidade, superior_login, superior_senha } = req.body;
       const tipo = Number(req.body.tipo);
     
        // Se for cadastrar bibliotecário ou admin, exige validação do superior

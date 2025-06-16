@@ -1,4 +1,5 @@
 <form action="/comentarioCreate" method="post">
+<h2> Cadastrar um comentário </h2>
   Texto: <input type="text" name="texto" required><br><br>
   Título: <input type="text" name="titulo" required><br><br>
   Usuário:
@@ -14,4 +15,5 @@
     {{/each}}
   </select><br><br>
   <input type="submit" value="Cadastrar">
+  <button type="button" onclick="window.location.href='/home'">Voltar</button>
 </form>
