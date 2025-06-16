@@ -1,3 +1,4 @@
+const session = require ('express-session');
 const routes = require ('./routers/route');
 const handlebars = require ('express-handlebars');
 const express = require ('express');
@@ -21,12 +22,18 @@ app.engine ('handlebars', handlebars.engine ({
         },
         json: function(context) {
             return JSON.stringify(context, null, 2);
-        }
+        },
+        eq: (a, b) => a == b
     }
 }));
 
 app.set ('view engine','handlebars');
 app.set('views', __dirname + '/views');
+app.use(session({
+    secret: 'otnemucod',
+    resave: false,
+    saveUninitialized: false,
+}))
 app.use (express.json ());
 app.use (express.urlencoded ({ extended: true }));
 

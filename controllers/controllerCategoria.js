@@ -3,7 +3,10 @@ const path = require('path');
 
 module.exports = {
   async getCreate(req, res) {
-    res.render('categoria/categoriaCreate');
+    res.render('categoria/categoriaCreate',
+      { 
+        usuario: req.session.usuario 
+      });
   },
 
   async postCreate(req, res) {
@@ -26,7 +29,8 @@ module.exports = {
     try {
       const categorias = await db.Categoria.findAll();
       res.render('categoria/categoriaList', {
-        categorias: categorias.map(catg => catg.toJSON())
+        categorias: categorias.map(catg => catg.toJSON()),
+        usuario: req.session.usuario
       });
     } catch (err) {
       console.log(err);
@@ -39,7 +43,10 @@ module.exports = {
       if (!categoria) {
         return res.status(404).send('Categoria não encontrada');
       }
-      res.render('categoria/categoriaList', { categoria: categoria.dataValues });
+      res.render('categoria/categoriaList', { 
+        ategoria: categoria.dataValues,
+        usuario: req.session.usuario
+      });
     } catch (err) {
       console.log(err);
       res.status(500).send('Erro ao buscar categoria para atualização');
@@ -66,7 +73,8 @@ module.exports = {
       let errorMessage = 'Não é possível excluir a categoria, pois ela está associada a livros ou comentários.';
       res.render('categoria/categoriaList',{
         categorias: (await db.Categoria.findAll()).map(catg => catg.toJSON()),
-        error: errorMessage
+        error: errorMessage,
+        usuario: req.session.usuario
       });
     }
   }

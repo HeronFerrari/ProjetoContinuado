@@ -1,6 +1,7 @@
 
 const db = require ('../config/db_sequelize');
 const path = require ('path');
+const usuario = require('../models/relational/usuario');
 
 module.exports = {
 
@@ -8,15 +9,27 @@ module.exports = {
   res.render ('usuario/login' ,{ layout: 'noMenu.handlebars'});
   },
 
+  async getLogout(req, res) {
+    try {
+     req.session.destroy(() => {
+      res.redirect('/login');
+     });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Erro ao tentar deslogar.");
+    }
+  },
+
   async postLogin(req, res) {
    try {
-    const usuarios = await db.Usuario.findAll({
+    const usuario = await db.Usuario.findOne({
       where: {
         login: req.body.login,
         senha: req.body.senha
       }
     });
-    if (usuarios.length > 0) {
+    if (usuario) {
+      req.session.usuario = usuario.toJSON(); // Salva usuário na sessão
       res.redirect('/home');
     } else {
       res.render('usuario/login', {
@@ -31,7 +44,9 @@ module.exports = {
   },
  
   async getCreate(req, res) {
-    res.render('usuario/usuarioCreate');
+    res.render('usuario/usuarioCreate', {
+      usuario: req.session.usuario
+    });
   },
 
   async postCreate(req, res) {
@@ -40,7 +55,7 @@ module.exports = {
       senha: req.body.senha,
       tipo: req.body.tipo
     }).then(() => {
-      res.redirect('/usuarioCreate');
+      res.redirect('/usuarioList');
     }).catch((err) => {
       console.log(err);
     });
@@ -48,8 +63,10 @@ module.exports = {
 
   async getList(req, res) {
     db.Usuario.findAll().then(usuarios => {
-      res.render('usuario/usuarioList',
-        { usuarios: usuarios.map(user => user.toJSON()) });
+      res.render('usuario/usuarioList',{ 
+        usuarios: usuarios.map(user => user.toJSON()),
+        usuario: req.session.usuario
+      });
     }).catch((err) => {
       console.log(err);
     });
@@ -58,7 +75,10 @@ module.exports = {
   async getUpdate(req, res) {
     try {
       const usuario = await db.Usuario.findByPk(req.params.id);
-      res.render('usuario/usuarioUpdate', { usuario: usuario.dataValues });
+      res.render('usuario/usuarioUpdate', { 
+        usuario: usuario.dataValues,
+        usuarioLogado: req.session.usuario
+        });
     } catch (err) {
       console.log(err);
     }

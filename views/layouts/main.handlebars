@@ -6,37 +6,44 @@
 
     <body>
         <center>
-            <h1> Sistema de Bilioteca </h1>
-        <a href ="usuarioCreate">
-            <button> Cadastrar Usuario </button>
-        </a>
-        
-        <a href ="usuarioList">
-        <button> Listar Usuarios </button>
-        </a>
-        
-        <a href ="/categoriaCreate"> 
-        <button> Cadastrar Categorias </button> 
-        </a>
-        
-        <a href ="/categoriaList"> 
-        <button> Listar Categorias </button> 
-        </a>
+        {{#if usuario }}
+             <h1> Sistema de Bilioteca </h1>
+            {{#if (eq usuario.tipo 1) }}
+        <!-- Administrador, possui todo o controle -->
+        <a href ="/usuarioCreate"> <button> Cadastrar Usuario </button> </a>
+        <a href ="/usuarioList"> <button> Listar Usuarios </button> </a>
+        <a href ="/categoriaCreate"> <button> Cadastrar Categorias </button> </a>
+        <a href ="/categoriaList"> <button> Listar Categorias </button> </a>
+        <a href ="/livroCreate"> <button> Cadastrar Livro </button> </a>
+        <a href ="/livroList"> <button> Listar Livros </button> </a>
+        <a href ="/comentarioCreate"> <button> Cadastrar Comentario </button> </a>
+        <a href ="/comentarioList"> <button >Listar Comentarios </button> </a>
+        <a href="/logout"> <button> Sair </button>
+        {{/if}}
 
-        <a href ="/livroCreate">
-        <button> Cadastrar Livro </button>
+        {{#if (eq usuario.tipo 2) }}
+        <!-- Bibliotecário, vê quase tudo, mas não usuários -->
+            <a href ="/livroList"> <button> Listar Livros </button> </a>
+            <a href ="/comentarioCreate"> <button> Cadastrar Comentario </button> </a>
+            <a href ="/comentarioList"> <button >Listar Comentarios </button> </a>
+            <a href="/logout"> <button> Sair </button>
+        {{/if}}
 
-        <a href ="/livroList">
-        <button> Listar Livros </button>
+        {{#if (eq usuario.tipo 3) }}
+        <!-- Usuário, vê livros e comentários -->
+            <a href ="/livroList"> <button> Listar Livros </button> </a>
+            <a href ="/comentarioList"> <button >Listar Comentarios </button> </a>
+            <a href="/emprestimoCreate"><button>Solicitar Empréstimo</button></a>
+            <a href="/reservaCreate"><button>Reservar Livro</button></a>
+            <a href="/logout"> <button> Sair </button>
+        {{/if}}
 
-        <a href ="comentarioCreate">
-        <button> Cadastrar Comentario </button>
-        </a>
-        
-        <a href ="comentarioList">
-        <button >Listar Comentarios </button>
-        </a>
-        
+        {{ else }}
+            <h1> Sistema de Biblioteca </h1>
+            <a href="/login"> <button> Login </button> </a>
+            <a href="/usuarioCreate"> <button> Cadastrar Usuario </button> </a>
+        {{/if}}
+
         <br> <br>
         {{{ body }}}
         </center>

@@ -1,11 +1,15 @@
 // controllers/livroController.js
 const db = require('../config/db_sequelize');
+const usuario = require('../models/relational/usuario');
 
 module.exports = {
   async getCreate(req, res) {
     try {
       const categorias = await db.Categoria.findAll();
-      res.render('livro/livroCreate', { categorias: categorias.map(cat => cat.toJSON()) });
+      res.render('livro/livroCreate', { 
+        categorias: categorias.map(cat => cat.toJSON()), 
+        usuario: req.session.usuario
+      });
     } catch (err) {
       console.log(err);
       res.status(500).send("Erro ao buscar categorias.");
@@ -19,7 +23,8 @@ module.exports = {
         const categorias = await db.Categoria.findAll();
         return res.status(400).render('livro/livroCreate', {
         categorias: categorias.map(cat => cat.toJSON()),
-        error: "Todos os campos são obrigatórios."
+        error: "Todos os campos são obrigatórios.",
+        usuario: req.session.usuario
         });
       }
       // Verifica se o ano é um número válido}
@@ -28,7 +33,8 @@ module.exports = {
       const categorias = await db.Categoria.findAll();
       return res.status(400).render('livro/livroCreate', {
       categorias: categorias.map(cat => cat.toJSON()),
-      error: "Ano inválido."
+      error: "Ano inválido.",
+      usuario: req.session.usuario
         });
       }
     
@@ -55,7 +61,8 @@ module.exports = {
             }]
         });
         res.render('livro/livroList', {
-            livros: livros.map(livro => livro.toJSON())
+            livros: livros.map(livro => livro.toJSON()),
+            usuario: req.session.usuario
         });
         } catch (err) {
         console.log(err);
@@ -76,7 +83,8 @@ module.exports = {
       const categorias = await db.Categoria.findAll();
       res.render('livro/livroUpdate', {
         livro: livro.toJSON(),
-        categorias: categorias.map(cat => cat.toJSON())
+        categorias: categorias.map(cat => cat.toJSON()),
+        usuario: req.session.usuario
       });
     } catch (err) {
       console.log(err);
@@ -91,7 +99,8 @@ module.exports = {
         return res.status(400).render('livro/livroUpdate', {
           livro: req.body,
           categorias: categorias.map(cat => cat.toJSON()),
-          error: "Todos os campos são obrigatórios."
+          error: "Todos os campos são obrigatórios.",
+          usuario: req.session.usuario
         });
       }
       // Verifica se o ano é um número válido
@@ -100,7 +109,8 @@ module.exports = {
         return res.status(400).render('livro/livroUpdate', {
           livro: req.body,
           categorias: categorias.map(cat => cat.toJSON()),
-          error: "Ano inválido."
+          error: "Ano inválido.",
+          usuario: req.session.usuario
         });
       }
 

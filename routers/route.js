@@ -5,6 +5,7 @@ const controllerUsuario = require('../controllers/controllerUsuario');
 const controllerComentario = require('../controllers/controllerComentario');
 const controllerCategoria = require('../controllers/controllerCategoria');
 const controllerLivro = require('../controllers/controllerLivro');
+const controllerAutor = require('../controllers/controllerAutor');
 const route = express.Router();
 
 //criando as tabelas e usuarios no banco de dados
@@ -16,11 +17,22 @@ const route = express.Router();
 module.exports = route;
 
 // Home
-route.get('/home', (req, res) => res.render('home'));
+route.get('/home', (req, res) => {
+  res.render('home',{
+  usuario: req.session.usuario  
+  });
+});
+
+route.get('/', (req, res) => {
+  res.render('home', {
+    usuario: req.session.usuario
+  });
+});
 
 // Controller Usuario
 route.get('/login', controllerUsuario.getLogin);
 route.post('/login', controllerUsuario.postLogin);
+route.get('/logout', controllerUsuario.getLogout);
 route.get('/usuarioCreate', controllerUsuario.getCreate);
 route.post('/usuarioCreate', controllerUsuario.postCreate);
 route.get('/usuarioList', controllerUsuario.getList);

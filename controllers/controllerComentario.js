@@ -19,7 +19,8 @@ mongoose.connect (db_mongoose.connection)
         const livros = await db.Livro.findAll();
         res.render ('comentario/comentarioCreate',{
         usuarios: usuarios.map(u => u.toJSON()),
-        livros: livros.map(l => l.toJSON())
+        livros: livros.map(l => l.toJSON()),
+        usuario: req.session.usuario
       });
   } catch (err) {
     console.log(err);
@@ -32,7 +33,7 @@ mongoose.connect (db_mongoose.connection)
       await new Comentario({
       texto: req.body.texto,
       titulo: req.body.titulo,
-      id_usuario: req.body.id_usuario,
+      id_usuario: req.session.usuario.id,
       id_livro: req.body.id_livro
     }).save()
     res.redirect ('/home');
@@ -80,7 +81,8 @@ mongoose.connect (db_mongoose.connection)
 
       res.render('comentario/comentarioList', {
         comentarios: comentariosComNomes,
-        id_usuario: req.session?.usuario?.id // ou outro local onde guarda o id do usuário logado
+        id_usuario: req.session?.usuario?.id, // ou outro local onde guarda o id do usuário logado
+        usuario: req.session.usuario
       });
     } catch (err) {
       console.log(err);
