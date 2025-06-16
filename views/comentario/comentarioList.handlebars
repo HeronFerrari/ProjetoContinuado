@@ -9,13 +9,11 @@
     <h3> <b> Id usuario:</b> {{id_usuario}} </h3>
  </div>
  <hr>
+   {{#or (eq id_usuario ../usuario.id) (eq ../usuario.tipo 1)}}
+   <a href="/comentarioDelete/{{id_comentario}}">Deletar</a>
+   {{/or}}
    {{#ifCond id_usuario ../id_usuario}}
-    <a href="/comentarioDelete/{{id_comentario}}">Deletar</a>
-    <a href="/comentarioUpdate/{{id_comentario}}">Editar</a>
-   {{/ifCond}}
-   {{#ifCond id_usuario ../id_usuario}}
-      <a href="/livroList">Voltar</a>
-      {{else}}
-      <a href="/usuarioList">Voltar</a>
+      <a href="/comentarioUpdate/{{id_comentario}}">Editar</a>
    {{/ifCond}}
  {{/each}}
+ <a href="/home"><button>Voltar ao Início</button></a>

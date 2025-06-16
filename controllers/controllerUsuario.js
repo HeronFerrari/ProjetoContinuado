@@ -12,6 +12,7 @@ module.exports = {
   async getLogout(req, res) {
     try {
      req.session.destroy(() => {
+      res.cookie('logoutMsg', 'Usuário deslogado com sucesso!', { maxAge: 5000, httpOnly: true });
       res.redirect('/login');
      });
     } catch (err) {

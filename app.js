@@ -2,7 +2,17 @@ const session = require ('express-session');
 const routes = require ('./routers/route');
 const handlebars = require ('express-handlebars');
 const express = require ('express');
+var cookieParser = require ('cookie-parser');
 const app = express ();
+app.use (cookieParser());
+app.use(session({
+    secret: 'otnemucod',
+    cookie: {maxAge:30*60*1000},
+    resave: false,
+    saveUninitialized: false,
+}));
+
+
 
 app.engine ('handlebars', handlebars.engine ({ 
     defaultLayout: 'main',
@@ -23,17 +33,16 @@ app.engine ('handlebars', handlebars.engine ({
         json: function(context) {
             return JSON.stringify(context, null, 2);
         },
-        eq: (a, b) => a == b
+        eq: (a, b) => a == b,
+        or: function(a, b, options) {
+            return (a || b) ? options.fn(this) : options.inverse(this);
+        }
     }
 }));
 
 app.set ('view engine','handlebars');
 app.set('views', __dirname + '/views');
-app.use(session({
-    secret: 'otnemucod',
-    resave: false,
-    saveUninitialized: false,
-}))
+
 app.use (express.json ());
 app.use (express.urlencoded ({ extended: true }));
 

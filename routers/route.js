@@ -18,9 +18,14 @@ module.exports = route;
 
 // Home
 route.get('/home', (req, res) => {
-  res.render('home',{
-  usuario: req.session.usuario  
-  });
+  // verifica se o cookie userData existe
+  if (req.session.usuario) {
+    res.render('home', {
+      usuario: req.session.usuario
+    });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 route.get('/', (req, res) => {

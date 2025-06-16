@@ -109,13 +109,12 @@ mongoose.connect (db_mongoose.connection)
       res.status(500).send("Erro ao buscar comentário para atualização.");
     }
   },
-  
+
   async postUpdate(req, res) {
   try {
     await Comentario.findByIdAndUpdate(req.body.id_comentario, {
       titulo: req.body.titulo,
       texto: req.body.texto,
-      usuario: req.session.usuario.id
     });
     res.redirect('/comentarioList');
   } catch (err) {
