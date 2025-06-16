@@ -45,20 +45,42 @@ module.exports = {
  
   async getCreate(req, res) {
     res.render('usuario/usuarioCreate', {
-      usuario: req.session.usuario
+      usuario: req.session.usuario, // Passa o usuário logado para o template
+      hideMenu: true, // Esconde o menu na tela de cadastro
     });
   },
 
   async postCreate(req, res) {
-    db.Usuario.create({
-      login: req.body.login,
-      senha: req.body.senha,
-      tipo: req.body.tipo
-    }).then(() => {
-      res.redirect('/usuarioList');
-    }).catch((err) => {
-      console.log(err);
+   
+    try {
+      const { login, senha, superior_login, superior_senha } = req.body;
+      const tipo = Number(req.body.tipo);
+    
+       // Se for cadastrar bibliotecário ou admin, exige validação do superior
+      if (tipo == 2 || tipo == 1) {
+        const superior = await db.Usuario.findOne({
+        where: {
+          login: superior_login,
+          senha: superior_senha    
+        }
+      });
+      if (!superior || superior.tipo > tipo || superior.tipo === 3) {
+        return res.render('usuario/usuarioCreate', {
+          error: "Credenciais do superior inválidas ou sem permissão.",
+          usuario: req.session.usuario
+        });
+      }
+    }
+
+    await db.Usuario.create({ login, senha, tipo });
+     // Exibe mensagem de sucesso na tela de cadastro
+    return res.render('usuario/usuarioCreate', {
+      usuario: req.session.usuario,
+      message: "Usuário cadastrado com sucesso!"
     });
+    } catch (err) {
+      res.status(500).send("Erro ao tentar criar usuário.");
+    }
   },
 
   async getList(req, res) {

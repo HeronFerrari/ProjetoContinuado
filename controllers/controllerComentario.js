@@ -88,5 +88,49 @@ mongoose.connect (db_mongoose.connection)
       console.log(err);
       res.status(500).send("Erro ao listar comentários.");
     }
+  },
+
+  async getUpdate(req, res) {
+    try {
+      const comentario = await Comentario.findById(req.params.id).lean();
+      if (!comentario) {
+        return res.status(404).send("Comentário não encontrado.");
+      }
+      const usuarios = await db.Usuario.findAll();
+      const livros = await db.Livro.findAll();
+      res.render('comentario/comentarioUpdate', {
+        comentario,
+        usuarios: usuarios.map(u => u.toJSON()),
+        livros: livros.map(l => l.toJSON()),
+        usuario: req.session.usuario
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Erro ao buscar comentário para atualização.");
+    }
+  },
+  
+  async postUpdate(req, res) {
+  try {
+    await Comentario.findByIdAndUpdate(req.body.id_comentario, {
+      titulo: req.body.titulo,
+      texto: req.body.texto,
+      usuario: req.session.usuario.id
+    });
+    res.redirect('/comentarioList');
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao atualizar comentário.");
   }
+},
+async getDelete(req, res) {
+  try {
+    await Comentario.findByIdAndDelete(req.params.id);
+    res.redirect('/comentarioList');
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao deletar comentário.");
+  }
+}
+
 }

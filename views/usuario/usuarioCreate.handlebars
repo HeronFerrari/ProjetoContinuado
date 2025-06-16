@@ -1,9 +1,45 @@
+{{#if error}}
+  <p style="color:red">{{error}}</p>
+{{/if}}
+{{#if message}}
+  <p style="color:green">{{message}}</p>
+{{/if}}
 <form action ="/usuarioCreate" method ="post">
- Login:<input type ="text" name ="login">
+<h2>Cadastrar Usuário</h2>
+ Login:<input type ="text" name ="login" placeholder="Digite seu login" required>
  <br> <br>
- Senha:<input type ="password" name ="senha">
+ Senha:<input type ="password" name ="senha" placeholder="Digite sua senha" required>
  <br> <br>
- Tipo:<input type ="number" name ="tipo">
+ <select name="tipo" required id="tipoUsuario">
+    <option value="3">Leitor</option>
+    <option value="2">Bibliotecário</option>
+    <option value="1">Administrador</option>
+  </select>
  <br> <br>
+
+<div id="credenciaisSuperior" style="display:none;">
+    <h4>Credenciais do usuário superior</h4>
+    <input type="text" name="superior_login" placeholder="Login do superior">
+    <input type="password" name="superior_senha" placeholder="Senha do superior">
+  </div>
+
+
  <input type ="submit" value ="Cadastrar">
- </form>
+ <a href="/login"><button type="button">Fazer Login</button></a>
+
+</form>
+
+<script>
+    function toggleSuperior(){
+        const tipo = document.getElementById('tipoUsuario').value;
+        document.getElementById('credenciaisSuperior').style.display =
+      (tipo == '1' || tipo == '2') ? 'block' : 'none';
+  }
+  // Mostra os campos de credencial do superior apenas para tipo 1 ou 2
+  document.querySelector('select[name="tipo"]').addEventListener('change', function() {
+    document.getElementById('credenciaisSuperior').style.display =
+      (this.value == '1' || this.value == '2') ? 'block' : 'none';
+  });
+</script>
+
+
