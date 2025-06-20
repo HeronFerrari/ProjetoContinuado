@@ -11,10 +11,10 @@
         <small class="text-muted"><b>Id livro:</b> {{id_livro}} | <b>Id usuário:</b> {{id_usuario}}</small>
         <div class="mt-2">
           {{#or (eq id_usuario ../usuario.id) (eq ../usuario.tipo 1)}}
-            <a href="/comentarioDelete/{{id_comentario}}" class="btn btn-sm btn-danger">Deletar</a>
+            <a href="/comentarioDelete/{{_id}}" class="btn btn-sm btn-danger">Deletar</a>
           {{/or}}
           {{#ifCond id_usuario ../id_usuario}}
-            <a href="/comentarioUpdate/{{id_comentario}}" class="btn btn-sm btn-primary ml-2">Editar</a>
+            <a href="/comentarioUpdate/{{_id}}" class="btn btn-sm btn-primary ml-2">Editar</a>
           {{/ifCond}}
         </div>
       </div>
