@@ -1,101 +1,116 @@
-<style>
-.btn-link {
-  display: inline-block;
-  background: #2a4d69;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-size: 1em;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  transition: background 0.2s, transform 0.1s;
-  }
-  .btn-link:hover {
-  background: #4176a2;
-  transform: translateY(-2px) scale(1.04);
-  }
-  .button{
-    display: flex;
-    gap: 10px;
-    text-align: center;
-    margin-top: 20px;
-  }
-</style>
 
-{{#if error}}
-  <p style="color:red">{{error}}</p>
-{{/if}}
-{{#if message}}
-  <p style="color:green">{{message}}</p>
-{{/if}}
-<form action ="/usuarioCreate" method ="post">
-<h2>Cadastrar Usuário</h2>
-  Nome: <input type="text" name="nome" placeholder="Digite seu nome" required>
-  <br><br>
-  Sobrenome: <input type="text" name="sobrenome" placeholder="Digite seu sobrenome" required>
-  <br><br>
-  Email: <input type="email" name="email" placeholder="Digite seu email" required>
-  Idade: <input type="number" name="idade" min="0" max="120" required>
-  <br><br>
-  Sexo:
-    <select name="sexo" required>
-        <option value="">Selecione</option>
-        <option value="Masculino">Masculino</option>
-        <option value="Feminino">Feminino</option>
-        <option value="Outro">Outro</option>
-    </select>
-  <br><br>
-  Telefone: <input type="tel" name="telefone" placeholder="Digite seu telefone" required>
-  Cidade: <input type="text" name="cidade" placeholder="Digite sua cidade" required>
-  <br><br>
-  Estado: <input type="text" name="estado" placeholder="Digite seu estado" required>
-  <br><br>
-  Nacionalidade: <input type="text" name="nacionalidade" placeholder="Digite sua nacionalidade" required>
-  <br><br>
-  Login:<input type ="text" name ="login" placeholder="Digite seu login" required>
-  <br> <br>
-  Senha:<input type ="password" name ="senha" placeholder="Digite sua senha" required>
-  <br> <br>
-    <select name="tipo" required id="tipoUsuario">
-        <option value="3">Leitor</option>
-        <option value="2">Bibliotecário</option>
-        <option value="1">Administrador</option>
-    </select>
-  <br><br>
+<div class="container" style="max-width: 600px; margin-top: 40px;">
+  <div class="card shadow">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Cadastrar Usuário</h2>
 
-    <div id="credenciaisSuperior" style="display:none;">
-        <h4>Credenciais do usuário superior</h4>
-        <input type="text" name="superior_login" placeholder="Login do superior">
-        <input type="password" name="superior_senha" placeholder="Senha do superior" id="superior_senha">
+      {{#if error}}
+        <div class="alert alert-danger">{{error}}</div>
+      {{/if}}
+      {{#if message}}
+        <div class="alert alert-success">{{message}}</div>
+      {{/if}}
+
+      <form action="/usuarioCreate" method="post">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="nome">Nome</label>
+            <input type="text" class="form-control" name="nome" id="nome" placeholder="Digite seu nome" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="sobrenome">Sobrenome</label>
+            <input type="text" class="form-control" name="sobrenome" id="sobrenome" placeholder="Digite seu sobrenome" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" name="email" id="email" placeholder="Digite seu email" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="idade">Idade</label>
+            <input type="number" class="form-control" name="idade" id="idade" min="0" max="120" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="sexo">Sexo</label>
+            <select class="form-control" name="sexo" id="sexo" required>
+              <option value="">Selecione</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="telefone">Telefone</label>
+            <input type="tel" class="form-control" name="telefone" id="telefone" placeholder="Digite seu telefone" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="cidade">Cidade</label>
+            <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Digite sua cidade" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="estado">Estado</label>
+            <input type="text" class="form-control" name="estado" id="estado" placeholder="Digite seu estado" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="nacionalidade">Nacionalidade</label>
+          <input type="text" class="form-control" name="nacionalidade" id="nacionalidade" placeholder="Digite sua nacionalidade" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="login">Login</label>
+            <input type="text" class="form-control" name="login" id="login" placeholder="Digite seu login" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="senha">Senha</label>
+            <input type="password" class="form-control" name="senha" id="senha" placeholder="Digite sua senha" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tipoUsuario">Tipo de Usuário</label>
+          <select class="form-control" name="tipo" id="tipoUsuario" required>
+            <option value="3">Leitor</option>
+            <option value="2">Bibliotecário</option>
+            <option value="1">Administrador</option>
+          </select>
+        </div>
+        <div id="credenciaisSuperior" style="display:none;">
+          <h5>Credenciais do usuário superior</h5>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <input type="text" class="form-control" name="superior_login" placeholder="Login do superior">
+            </div>
+            <div class="form-group col-md-6">
+              <input type="password" class="form-control" name="superior_senha" placeholder="Senha do superior" id="superior_senha">
+            </div>
+          </div>
+        </div>
+        <div class="form-group d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-success">Cadastrar</button>
+          <a href="/login" class="btn btn-link">Fazer Login</a>
+          <a href="/home" class="btn btn-secondary">Voltar</a>
+        </div>
+      </form>
     </div>
-
-  <br><br>
-    <div class="button">
-      <input type ="submit" class="btn-link" value ="Cadastrar">
-      <a href="/login" class="btn-link">Fazer Login</a>
-      <button type="button" class="btn-link" onclick="window.location.href='/home'">Voltar</button>
-    </div>
-   
-
-</form>
+  </div>
+</div>
 
 <script>
-    function toggleSuperior(){
-        const tipo = document.getElementById('tipoUsuario').value;
-        const credenciais = document.getElementById('credenciaisSuperior');
-        const superiorSenha = document.getElementById('superior_senha');
-        if (tipo == '1' || tipo == '2') {
-          credenciais.style.display = 'block';
-          superiorSenha.required = true;
-        } else {
-            credenciais.style.display = 'none';
-            superiorSenha.required = false;
-        }
-  } 
+  function toggleSuperior(){
+    const tipo = document.getElementById('tipoUsuario').value;
+    const credenciais = document.getElementById('credenciaisSuperior');
+    const superiorSenha = document.getElementById('superior_senha');
+    if (tipo == '1' || tipo == '2') {
+      credenciais.style.display = 'block';
+      superiorSenha.required = true;
+    } else {
+      credenciais.style.display = 'none';
+      superiorSenha.required = false;
+    }
+  }
   document.getElementById('tipoUsuario').addEventListener('change', toggleSuperior);
   window.onload = toggleSuperior;
 </script>
-
-

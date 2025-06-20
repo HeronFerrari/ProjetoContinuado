@@ -1,19 +1,24 @@
-{{#each comentarios}}
- <div>
-    <h1><b> Titulo: </b>{{ titulo }} </h1>
-    <h2><b> Usuário: </b>{{ usuario_nome }}</h2>
-    <h2><b> Livro: </b>{{ livro_titulo }}</h2>
-    <h2><b> Autor: </b>{{ autor }} </h2>
-    <p> {{ texto }} </p>
-    <h3> <b> Id livro:</b> {{ id_livro }} </h3>
-    <h3> <b> Id usuario:</b> {{id_usuario}} </h3>
- </div>
- <hr>
-   {{#or (eq id_usuario ../usuario.id) (eq ../usuario.tipo 1)}}
-   <a href="/comentarioDelete/{{id_comentario}}">Deletar</a>
-   {{/or}}
-   {{#ifCond id_usuario ../id_usuario}}
-      <a href="/comentarioUpdate/{{id_comentario}}">Editar</a>
-   {{/ifCond}}
- {{/each}}
- <a href="/home"><button>Voltar ao Início</button></a>
+<div class="container mt-4">
+  <h2 class="mb-4">Comentários</h2>
+  {{#each comentarios}}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h4 class="card-title"><b>Título:</b> {{titulo}}</h4>
+        <h6 class="card-subtitle mb-2 text-muted"><b>Usuário:</b> {{usuario_nome}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted"><b>Livro:</b> {{livro_titulo}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted"><b>Autor:</b> {{autor}}</h6>
+        <p class="card-text">{{texto}}</p>
+        <small class="text-muted"><b>Id livro:</b> {{id_livro}} | <b>Id usuário:</b> {{id_usuario}}</small>
+        <div class="mt-2">
+          {{#or (eq id_usuario ../usuario.id) (eq ../usuario.tipo 1)}}
+            <a href="/comentarioDelete/{{id_comentario}}" class="btn btn-sm btn-danger">Deletar</a>
+          {{/or}}
+          {{#ifCond id_usuario ../id_usuario}}
+            <a href="/comentarioUpdate/{{id_comentario}}" class="btn btn-sm btn-primary ml-2">Editar</a>
+          {{/ifCond}}
+        </div>
+      </div>
+    </div>
+  {{/each}}
+  <a href="/home" class="btn btn-secondary">Voltar ao Início</a>
+</div>

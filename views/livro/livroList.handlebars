@@ -1,12 +1,14 @@
-<h1>Lista de Livros</h1>
-<button type="button" onclick="window.location.href='/home'">Voltar</button>
-<table border="1">
-  <thead>
+<!-- Lista de livros -->
+<h1 class="mb-4">Lista de Livros</h1>
+<a href="/home" class="btn btn-secondary mb-3">Voltar</a>
+<table class="table table-striped table-bordered">
+  <thead class="thead-dark">
     <tr>
       <th>Título</th>
       <th>Ano</th>
       <th>Gênero</th>
       <th>Tipo</th>
+      <th>Ações</th>
     </tr>
   </thead>
   <tbody>
@@ -16,11 +18,13 @@
         <td>{{ano}}</td>
         <td>{{Categoria.nome}}</td>
         <td>{{Categoria.tipo}}</td>
-        <td><a href="/livroUpdate/{{id_livro}}">Editar</a></td>
-        <td><a href="/livroDelete/{{id_livro}}">Deletar</a></td>
+        <td>
+          <a href="/livroUpdate/{{id_livro}}" class="btn btn-sm btn-primary">Editar</a>
+          <a href="/livroDelete/{{id_livro}}" class="btn btn-sm btn-danger ml-2">Deletar</a>
+        </td>
       </tr>
       <tr>
-        <td colspan="6">
+        <td colspan="5">
           <pre>{{json this}}</pre>
         </td>
       </tr>

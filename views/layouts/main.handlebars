@@ -1,105 +1,71 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Sistema de Biblioteca</title>
-       <!-- Bootstrap 4 CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            background: #f2f6fc;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .main-container {
-            max-width: 900px;
-            margin: 40px auto 0 auto;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 4px 24px #0001;
-            padding: 32px 36px 24px 36px;
-        }
-        .menu-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        .menu-bar h1 {
-            flex-basis: 100%;
-            color: #2a4d69;
-            margin-bottom: 18px;
-            text-align: center;
-        }
-        .menu-bar a button {
-            background: #2a4d69;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 18px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .menu-bar a button:hover {
-            background: #4176a2;
-            transform: translateY(-2px) scale(1.04);
-        }
-        .content-area {
-            margin-top: 10px;
-        }
-    </style>
-</head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>Sistema da biblioteca</title>
+  </head>
 <body>
-    <div class="main-container">
-        {{#unless hideMenu}}
-            <div class="menu-bar">
-                <h1>Sistema de Biblioteca</h1>
-                {{#if usuario}}
-                    {{#if (eq usuario.tipo 1) }}
-                        <a href="/usuarioCreate"><button>Cadastrar Usuário</button></a>
-                        <a href="/usuarioList"><button>Listar Usuários</button></a>
-                        <a href="/categoriaCreate"><button>Cadastrar Categorias</button></a>
-                        <a href="/categoriaList"><button>Listar Categorias</button></a>
-                        <a href="/livroCreate"><button>Cadastrar Livro</button></a>
-                        <a href="/livroList"><button>Listar Livros</button></a>
-                        <a href="/comentarioCreate"><button>Cadastrar Comentário</button></a>
-                        <a href="/comentarioList"><button>Listar Comentários</button></a>
-                        <a href="/logout"><button>Sair</button></a>
-                    {{/if}}
-                    {{#if (eq usuario.tipo 2) }}
-                        <a href="/livroList"><button>Listar Livros</button></a>
-                        <a href="/comentarioCreate"><button>Cadastrar Comentário</button></a>
-                        <a href="/comentarioList"><button>Listar Comentários</button></a>
-                        <a href="/logout"><button>Sair</button></a>
-                    {{/if}}
-                    {{#if (eq usuario.tipo 3) }}
-                        <a href="/livroList"><button>Listar Livros</button></a>
-                        <a href="/comentarioList"><button>Listar Comentários</button></a>
-                        <a href="/emprestimoCreate"><button>Solicitar Empréstimo</button></a>
-                        <a href="/reservaCreate"><button>Reservar Livro</button></a>
-                        <a href="/logout"><button>Sair</button></a>
-                    {{/if}}
-                {{else}}
-                    <a href="/login"><button>Login</button></a>
-                    <a href="/usuarioCreate"><button>Cadastrar Usuário</button></a>
-                {{/if}}
-            </div>
-        {{/unless}}
 
-        <div class="content-area">
-            {{{ body }}}
-        </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Sistema de Biblioteca</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      {{#if usuario}}
+        <li class="nav-item"><a class="nav-link" href="/logout">Sair</a></li>
+      {{else}}
+        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
+<div class="container mt-4">
+  {{#unless hideMenu}}
+    <div class="btn-group mb-4" role="group">
+      {{#if usuario}}
+        {{#if (eq usuario.tipo 1) }}
+          <a href="/usuarioCreate" class="btn btn-outline-primary">Cadastrar Usuário</a>
+          <a href="/usuarioList" class="btn btn-outline-primary">Listar Usuários</a>
+          <a href="/categoriaCreate" class="btn btn-outline-primary">Cadastrar Categorias</a>
+          <a href="/categoriaList" class="btn btn-outline-primary">Listar Categorias</a>
+          <a href="/livroCreate" class="btn btn-outline-primary">Cadastrar Livro</a>
+          <a href="/livroList" class="btn btn-outline-primary">Listar Livros</a>
+          <a href="/comentarioCreate" class="btn btn-outline-primary">Cadastrar Comentário</a>
+          <a href="/comentarioList" class="btn btn-outline-primary">Listar Comentários</a>
+          <a href="/logout" class="btn btn-danger">Sair</a>
+        {{/if}}
+        {{#if (eq usuario.tipo 2) }}
+          <a href="/livroList" class="btn btn-outline-primary">Listar Livros</a>
+          <a href="/comentarioCreate" class="btn btn-outline-primary">Cadastrar Comentário</a>
+          <a href="/comentarioList" class="btn btn-outline-primary">Listar Comentários</a>
+          <a href="/logout" class="btn btn-danger">Sair</a>
+        {{/if}}
+        {{#if (eq usuario.tipo 3) }}
+          <a href="/livroList" class="btn btn-outline-primary">Listar Livros</a>
+          <a href="/comentarioList" class="btn btn-outline-primary">Listar Comentários</a>
+          <a href="/emprestimoCreate" class="btn btn-outline-primary">Solicitar Empréstimo</a>
+          <a href="/reservaCreate" class="btn btn-outline-primary">Reservar Livro</a>
+          <a href="/logout" class="btn btn-danger">Sair</a>
+        {{/if}}
+      {{else}}
+        <a href="/login" class="btn btn-outline-primary">Login</a>
+        <a href="/usuarioCreate" class="btn btn-outline-primary">Cadastrar Usuário</a>
+      {{/if}}
     </div>
-    <!-- jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  {{/unless}}
+  <div class="content-area">
+    {{{ body }}}
+  </div>
+</div>
 
-    <!-- Popper.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Bootstrap 4 JS -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </body>
 </html>

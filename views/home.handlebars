@@ -1,1 +1,13 @@
-<body></body>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow p-4 text-center" style="max-width: 400px; width: 100%;">
+    <h1 class="mb-3">Sistema de Biblioteca</h1>
+    <h4 class="mb-4 text-success">Bem-vindo!</h4>
+    <p class="lead mb-4">Você será redirecionado para a tela de login em instantes.</p>
+    <a href="/login" class="btn btn-primary btn-lg">Ir para Login agora</a>
+  </div>
+</div>
+<script>
+  setTimeout(function() {
+    window.location.href = '/login';
+  }, 30000000);
+</script>

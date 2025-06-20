@@ -1,23 +1,28 @@
-<h1>Lista de Autores</h1>
-<a href="/autorCreate">Novo Autor</a>
-<table border="1">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nome</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each autores}}
+<div class="container mt-4">
+  <h2 class="mb-4">Lista de Autores</h2>
+  <div class="mb-3">
+    <a href="/autorCreate" class="btn btn-success">Novo Autor</a>
+  </div>
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
       <tr>
-        <td>{{id_autor}}</td>
-        <td>{{nome}}</td>
-        <td>
-          <a href="/autorUpdate/{{id_autor}}">Editar</a>
-          <a href="/autorDelete/{{id_autor}}">Excluir</a>
-        </td>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Ações</th>
       </tr>
-    {{/each}}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {{#each autores}}
+        <tr>
+          <td>{{id_autor}}</td>
+          <td>{{nome}}</td>
+          <td>
+            <a href="/autorUpdate/{{id_autor}}" class="btn btn-sm btn-primary">Editar</a>
+            <a href="/autorDelete/{{id_autor}}" class="btn btn-sm btn-danger ml-2">Excluir</a>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <a href="/home" class="btn btn-secondary">Voltar</a>
+</div>
