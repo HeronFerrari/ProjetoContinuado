@@ -18,6 +18,19 @@
       {{/each}}
     </select>
   </div>
+  <div class="form-group d-flex align-items-end">
+    <div style="flex:1;">
+      <label for="id_autor">Autor:</label>
+      <select class="form-control" name="id_autor" id="id_autor" required>
+        {{#each autores}}
+          <option value="{{id_autor}}">
+            {{nome}}
+          </option>
+        {{/each}}
+      </select>
+    </div>
+    <a href="/autorCreate" class="btn btn-success ml-2 mb-1">Cadastrar Autor</a>
+  </div>
   <div class="form-group d-flex justify-content-between">
     <button type="submit" class="btn btn-primary">Cadastrar Livro</button>
     <a href="/home" class="btn btn-secondary">Voltar</a>

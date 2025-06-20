@@ -6,8 +6,10 @@ module.exports = {
   async getCreate(req, res) {
     try {
       const categorias = await db.Categoria.findAll();
+       const autores = await db.Autor.findAll(); 
       res.render('livro/livroCreate', { 
         categorias: categorias.map(cat => cat.toJSON()), 
+        autores: autores.map(autor => autor.toJSON()),
         usuario: req.session.usuario
       });
     } catch (err) {
@@ -42,8 +44,9 @@ module.exports = {
 
       await db.Livro.create({
         titulo: req.body.titulo,
-        ano: req.body.ano, // Se houver esse campo no form
-        id_categoria: req.body.id_categoria
+        ano: req.body.ano, 
+        id_categoria: req.body.id_categoria,
+        id_autor: req.body.id_autor 
       });
       res.redirect('/livroList'); 
     } catch (err) {
@@ -72,18 +75,20 @@ module.exports = {
   async getUpdate(req, res) {
     try {
       const livro = await db.Livro.findByPk(req.params.id, {
-        include: [{
-          model: db.Categoria,
-          attributes: ['id_categoria', 'nome', 'tipo']
-        }]
+        include: [
+          { model: db.Categoria, attributes: ['id_categoria', 'nome', 'tipo'] },
+          { model: db.Autor, attributes: ['id_autor', 'nome'] }
+        ]
       });
       if (!livro) {
         return res.status(404).send("Livro não encontrado.");
       }
       const categorias = await db.Categoria.findAll();
+      const autores = await db.Autor.findAll();
       res.render('livro/livroUpdate', {
         livro: livro.toJSON(),
         categorias: categorias.map(cat => cat.toJSON()),
+        autores: autores.map(autor => autor.toJSON()),
         usuario: req.session.usuario
       });
     } catch (err) {
@@ -115,9 +120,11 @@ module.exports = {
       }
 
       await db.Livro.update(
-        { titulo: req.body.titulo, 
+        { 
+          titulo: req.body.titulo, 
           ano: req.body.ano, 
-          id_categoria: req.body.id_categoria 
+          id_categoria: req.body.id_categoria ,
+          id_autor: req.body.id_autor
         },
         { where: { id_livro: req.body.id_livro } });
       res.redirect('/livroList');

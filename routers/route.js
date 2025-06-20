@@ -72,10 +72,20 @@ route.post('/livroUpdate', controllerLivro.postUpdate);
 route.get('/livroDelete/:id', controllerLivro.getDelete);
 
 
-//Controller Emprestimo
+//Controller Emprestimo e reserva
 route.post('/emprestimoCreate', controllerEmprestimo.postCreate);
 route.post('/devolucao', controllerEmprestimo.devolverLivro);
 route.post('/reserva', controllerReserva.criarReserva);
+route.get('/reservaDelete/:id', controllerReserva.getDelete);
+route.get('/reservaList', controllerReserva.getList);
+
+//Controller Autor
+route.get('/autorCreate', controllerAutor.getCreate);
+route.post('/autorCreate', controllerAutor.postCreate);
+
+
+
+
 
 /*codigo do professor, não adaptado para o meu código
 
