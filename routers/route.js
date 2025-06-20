@@ -6,6 +6,8 @@ const controllerComentario = require('../controllers/controllerComentario');
 const controllerCategoria = require('../controllers/controllerCategoria');
 const controllerLivro = require('../controllers/controllerLivro');
 const controllerAutor = require('../controllers/controllerAutor');
+const controllerEmprestimo = require('../controllers/controllerEmprestimo');
+const controllerReserva = require('../controllers/controllerReserva');
 const route = express.Router();
 
 //criando as tabelas e usuarios no banco de dados
@@ -68,6 +70,13 @@ route.get('/livroList', controllerLivro.getList);
 route.get('/livroUpdate/:id', controllerLivro.getUpdate);
 route.post('/livroUpdate', controllerLivro.postUpdate);
 route.get('/livroDelete/:id', controllerLivro.getDelete);
+
+
+//Controller Emprestimo
+route.post('/emprestimoCreate', controllerEmprestimo.postCreate);
+route.post('/devolucao', controllerEmprestimo.devolverLivro);
+route.post('/reserva', controllerReserva.criarReserva);
+
 /*codigo do professor, não adaptado para o meu código
 
 // Controller Receita do projeto do professor -- pode ignorar

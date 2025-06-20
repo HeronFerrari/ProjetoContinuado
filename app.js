@@ -1,10 +1,14 @@
-const session = require ('express-session');
-const routes = require ('./routers/route');
-const handlebars = require ('express-handlebars');
 const express = require ('express');
+const session = require ('express-session');
+const handlebars = require ('express-handlebars');
+const routes = require ('./routers/route');
+
 var cookieParser = require ('cookie-parser');
 const app = express ();
+const middlewares = require ('./middlewares/middlewares');
+
 app.use (cookieParser());
+
 app.use(session({
     secret: 'otnemucod',
     cookie: {maxAge:30*60*1000},
@@ -12,7 +16,7 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-
+app.use (middlewares.logRegister,middlewares.sessionControl);
 
 app.engine ('handlebars', handlebars.engine ({ 
     defaultLayout: 'main',

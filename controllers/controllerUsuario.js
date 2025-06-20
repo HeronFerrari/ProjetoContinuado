@@ -56,7 +56,8 @@ module.exports = {
   async postCreate(req, res) {
    
     try {
-      const { login, senha, nome, sobrenome, idade, sexo, cidade, estado, nacionalidade, superior_login, superior_senha } = req.body;
+      console.log('Dados recebidos no login:', req.body);
+      const { login, senha, nome, sobrenome, email, idade, sexo, cidade, estado, nacionalidade, superior_login, superior_senha } = req.body;
       const tipo = Number(req.body.tipo);
     
        // Se for cadastrar bibliotecário ou admin, exige validação do superior
@@ -75,13 +76,14 @@ module.exports = {
       }
     }
 
-    await db.Usuario.create({ login, senha, tipo });
+    await db.Usuario.create({ login, senha, nome, sobrenome, email, idade, sexo, cidade, estado, nacionalidade, tipo });
      // Exibe mensagem de sucesso na tela de cadastro
     return res.render('usuario/usuarioCreate', {
       usuario: req.session.usuario,
       message: "Usuário cadastrado com sucesso!"
     });
     } catch (err) {
+      console.log(err);
       res.status(500).send("Erro ao tentar criar usuário.");
     }
   },

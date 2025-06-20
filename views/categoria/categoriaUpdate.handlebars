@@ -1,3 +1,29 @@
+<style>
+  .btn-link {
+    display: inline-block;
+    background: #2a4d69;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    }
+    .btn-link:hover {
+    background: #4176a2;
+    transform: translateY(-2px) scale(1.04);
+    }
+    .button{
+      display: flex;
+      gap: 10px;
+      text-align: center;
+      margin-top: 20px;
+    }
+</style>
+
 <form action="/categoriaUpdate" method="post">
     <input type="hidden" name="id_categoria" value="{{categoria.id_categoria}}">
     Nome: <input type="text" name="nome" value="{{categoria.nome}}">
@@ -6,4 +32,7 @@
     <br><br>
     <input type="submit" value="Editar">
 </form>
-<button type="button" onclick="window.location.href='/home'">Voltar</button>
+ <div class="button">
+  <input type="submit" class="btn-link" value="Cadastrar">
+  <button type="button" class="btn-link" onclick="window.location.href='/home'">Voltar</button>
+  </div>
