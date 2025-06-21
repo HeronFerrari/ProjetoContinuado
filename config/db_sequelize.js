@@ -25,8 +25,8 @@ db.Categoria.hasMany(db.Livro, { foreignKey: 'id_categoria', onDelete: 'NO ACTIO
 db.Livro.belongsTo(db.Categoria, { foreignKey: 'id_categoria', as: 'Categoria' });
 
 // Livro N:N Autor (via LivroAutor)
-db.Livro.belongsToMany(db.Autor, { through: db.LivroAutor, foreignKey: 'id_livro' });
-db.Autor.belongsToMany(db.Livro, { through: db.LivroAutor, foreignKey: 'id_autor' });
+db.Livro.belongsToMany(db.Autor, { through: db.LivroAutor, as: 'Autores', foreignKey: 'id_livro', otherKey: 'id_autor'  });
+db.Autor.belongsToMany(db.Livro, { through: db.LivroAutor, as: 'Livros', foreignKey: 'id_autor', otherKey: 'id_livro' });
 
 // Usuario 1:N Emprestimo
 db.Usuario.hasMany(db.Emprestimo, { foreignKey: 'id_usuario' });

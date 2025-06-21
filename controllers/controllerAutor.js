@@ -20,7 +20,7 @@ module.exports = {
       await db.Autor.create({
         nome: req.body.nome
       });
-      res.redirect('/autorList');
+      res.redirect('/livroCreate');
     } catch (err) {
       console.log(err);
       res.status(500).send("Erro ao cadastrar autor.");

@@ -1,5 +1,6 @@
 // controllers/livroController.js
 const db = require('../config/db_sequelize');
+const { where } = require('../models/noSql/comentario');
 const usuario = require('../models/relational/usuario');
 
 module.exports = {
@@ -21,47 +22,58 @@ module.exports = {
   async postCreate(req, res) {
     try {
       // Validação simples
-      if (!req.body.titulo || !req.body.ano || !req.body.id_categoria) {
+      if (!req.body.titulo || !req.body.ano || !req.body.id_categoria || !req.body.id_autores) {
         const categorias = await db.Categoria.findAll();
+        const autores = await db.Autor.findAll();
         return res.status(400).render('livro/livroCreate', {
         categorias: categorias.map(cat => cat.toJSON()),
+        autores: autores.map(autor => autor.toJSON()),
         error: "Todos os campos são obrigatórios.",
         usuario: req.session.usuario
         });
       }
+      
       // Verifica se o ano é um número válido}
   
-      if (isNaN(req.body.ano) || req.body.ano < 0) {
+    if (isNaN(req.body.ano) || req.body.ano < 0) {
       const categorias = await db.Categoria.findAll();
+      const autores = await db.Autor.findAll();
       return res.status(400).render('livro/livroCreate', {
       categorias: categorias.map(cat => cat.toJSON()),
+      autores: autores.map(autor => autor.toJSON()),
       error: "Ano inválido.",
       usuario: req.session.usuario
-        });
-      }
-    
-      // Criação do livro
-
-      await db.Livro.create({
-        titulo: req.body.titulo,
-        ano: req.body.ano, 
-        id_categoria: req.body.id_categoria,
-        id_autor: req.body.id_autor 
       });
-      res.redirect('/livroList'); 
+    }
+
+
+        // Criação do livro (sem id_autor)
+      const livro = await db.Livro.create({
+      titulo: req.body.titulo,
+      ano: req.body.ano,
+      id_categoria: req.body.id_categoria
+      });
+
+       // Associa autores (id_autores pode ser um array ou string)
+      let idsAutores = req.body.id_autores;
+      if (!Array.isArray(idsAutores)) {
+      idsAutores = [idsAutores];
+      }
+      await livro.setAutores(idsAutores);
+      res.redirect('/livroList');
     } catch (err) {
       console.log(err);
       res.status(500).send("Erro ao cadastrar livro.");
     }
   },
+
     async getList(req, res) {
         try {
         const livros = await db.Livro.findAll({
-            include: [{
-            model: db.Categoria, 
-            as: 'Categoria',
-            attributes: ['id_categoria', 'nome', 'tipo'] 
-            }]
+            include: [
+              {model: db.Categoria, as: 'Categoria', attributes: ['id_categoria', 'nome', 'tipo']},
+              {model: db.Autor, as: 'Autores', attributes: ['id_autor', 'nome']}
+            ]
         });
         res.render('livro/livroList', {
             livros: livros.map(livro => livro.toJSON()),
@@ -76,8 +88,8 @@ module.exports = {
     try {
       const livro = await db.Livro.findByPk(req.params.id, {
         include: [
-          { model: db.Categoria, attributes: ['id_categoria', 'nome', 'tipo'] },
-          { model: db.Autor, attributes: ['id_autor', 'nome'] }
+          { model: db.Categoria, as: 'Categoria', attributes: ['id_categoria', 'nome', 'tipo'] },
+          { model: db.Autor, as: 'Autores', attributes: ['id_autor', 'nome'] }
         ]
       });
       if (!livro) {
@@ -99,11 +111,14 @@ module.exports = {
   async postUpdate(req, res) {
     try {
       // Validação simples
-      if (!req.body.titulo || !req.body.ano || !req.body.id_categoria) {
+      if (!req.body.titulo || !req.body.ano || !req.body.id_categoria || !req.body.id_autores) {
         const categorias = await db.Categoria.findAll();
+        const autores = await db.Autor.findAll();
+
         return res.status(400).render('livro/livroUpdate', {
           livro: req.body,
           categorias: categorias.map(cat => cat.toJSON()),
+          autores: autores.map(autor => autor.toJSON()),
           error: "Todos os campos são obrigatórios.",
           usuario: req.session.usuario
         });
@@ -111,6 +126,7 @@ module.exports = {
       // Verifica se o ano é um número válido
       if (isNaN(req.body.ano) || req.body.ano < 0) {
         const categorias = await db.Categoria.findAll();
+        const autores = await db.Autor.findAll();
         return res.status(400).render('livro/livroUpdate', {
           livro: req.body,
           categorias: categorias.map(cat => cat.toJSON()),
@@ -119,21 +135,27 @@ module.exports = {
         });
       }
 
+      const livro = await db.Livro.findByPk(req.body.id_livro);
       await db.Livro.update(
         { 
           titulo: req.body.titulo, 
           ano: req.body.ano, 
-          id_categoria: req.body.id_categoria ,
-          id_autor: req.body.id_autor
+          id_categoria: req.body.id_categoria
         },
-        { where: { id_livro: req.body.id_livro } });
-      res.redirect('/livroList');
+      { where: { id_livro: req.body.id_livro } }
+      );
+      let idsAutores = req.body.id_autores;
+      if (!Array.isArray(idsAutores)) {
+      idsAutores = [idsAutores];
+      }
+      await livro.setAutores(idsAutores);
 
+      res.redirect('/livroList');
     } catch (err) {
       console.log(err);
       res.status(500).send("Erro ao atualizar livro.");
-    }
-  },
+  }
+},
 
   async getDelete(req, res) {
     try {

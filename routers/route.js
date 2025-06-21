@@ -71,7 +71,6 @@ route.get('/livroUpdate/:id', controllerLivro.getUpdate);
 route.post('/livroUpdate', controllerLivro.postUpdate);
 route.get('/livroDelete/:id', controllerLivro.getDelete);
 
-
 //Controller Emprestimo e reserva
 route.post('/emprestimoCreate', controllerEmprestimo.postCreate);
 route.post('/devolucao', controllerEmprestimo.devolverLivro);
@@ -82,19 +81,6 @@ route.get('/reservaList', controllerReserva.getList);
 //Controller Autor
 route.get('/autorCreate', controllerAutor.getCreate);
 route.post('/autorCreate', controllerAutor.postCreate);
-
-
-
-
-
-/*codigo do professor, não adaptado para o meu código
-
-// Controller Receita do projeto do professor -- pode ignorar
-route.get('/receitaCreate', controllerReceita.getCreate);
-route.post('/receitaCreate', controllerReceita.postCreate);
-route.get('/receitaList', controllerReceita.getList);
-route.get('/receitaUpdate/:id', controllerReceita.getUpdate);
-route.post('/receitaUpdate', controllerReceita.postUpdate);
-route.get('/receitaDelete/:id', controllerReceita.getDelete);
-
-*/
+route.get('/autorUpdate/:id_autor', controllerAutor.getUpdate);
+route.post('/autorUpdate/:id_autor', controllerAutor.postUpdate);
+route.get('/autorDelete/:id_autor', controllerAutor.getDelete);

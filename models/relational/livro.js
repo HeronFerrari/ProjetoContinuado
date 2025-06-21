@@ -12,11 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     ano: { 
       type: DataTypes.INTEGER 
     },
-    id_autor: { 
-      type: DataTypes.INTEGER,
-      references: { model: 'Autor', key: 'id_autor' }, 
-      allowNull: false 
-    },
     id_categoria: { 
       type: DataTypes.INTEGER,
       references: { model: 'Categoria', key: 'id_categoria' }, 

@@ -43,8 +43,8 @@ module.exports = {
       if (!categoria) {
         return res.status(404).send('Categoria não encontrada');
       }
-      res.render('categoria/categoriaList', { 
-        ategoria: categoria.dataValues,
+      res.render('categoria/categoriaUpdate', { 
+        categoria: categoria.dataValues,
         usuario: req.session.usuario
       });
     } catch (err) {
