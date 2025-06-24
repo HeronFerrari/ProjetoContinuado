@@ -4,7 +4,7 @@
     <div class="card-body">
       <h2 class="card-title text-center mb-4">Editar Comentário</h2>
       <form action="/comentarioUpdate" method="post">
-        <input type="hidden" name="id" value="{{comentario._id}}">
+        <input type="hidden" name="id_comentario" value="{{comentario._id}}">
         <div class="form-group">
           <label for="titulo">Título:</label>
           <input type="text" class="form-control" name="titulo" id="titulo" value="{{comentario.titulo}}" required>

@@ -1,0 +1,34 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Editar Usuário</h2>
+
+  {{#if error}}
+    <div class="alert alert-danger">{{error}}</div>
+  {{/if}}
+
+  <form action="/usuarioUpdate" method="POST">
+    
+    <input type="hidden" name="id" value="{{usuario.id}}">
+
+    <div class="form-group">
+      <label for="login">Login</label>
+      <input type="text" class="form-control" id="login" name="login" value="{{usuario.login}}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="senha">Nova Senha (deixe em branco para não alterar)</label>
+      <input type="password" class="form-control" id="senha" name="senha">
+    </div>
+
+    <div class="form-group">
+      <label for="tipo">Tipo de Usuário</label>
+      <select class="form-control" id="tipo" name="tipo" required>
+        <option value="ADMIN" {{#if (eq usuario.tipo 'ADMIN')}}selected{{/if}}>Administrador</option>
+        <option value="BIBLIOTECARIO" {{#if (eq usuario.tipo 'BIBLIOTECARIO')}}selected{{/if}}>Bibliotecário</option>
+        <option value="LEITOR" {{#if (eq usuario.tipo 'LEITOR')}}selected{{/if}}>Leitor</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+    <a href="/usuarioList" class="btn btn-secondary mt-3">Cancelar</a>
+  </form>
+</div>

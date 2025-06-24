@@ -6,8 +6,11 @@ const usuario = require('../models/relational/usuario');
 module.exports = {
   async getCreate(req, res) {
     try {
+      if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
+        return res.status(403).send('Acesso negado.');
+      }
       const categorias = await db.Categoria.findAll();
-       const autores = await db.Autor.findAll(); 
+      const autores = await db.Autor.findAll(); 
       res.render('livro/livroCreate', { 
         categorias: categorias.map(cat => cat.toJSON()), 
         autores: autores.map(autor => autor.toJSON()),
@@ -20,6 +23,9 @@ module.exports = {
   },
 
   async postCreate(req, res) {
+    if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
+      return res.status(403).send('Acesso negado.');
+    }
     try {
       // Validação simples
       if (!req.body.titulo || !req.body.ano || !req.body.id_categoria || !req.body.id_autores) {
@@ -85,6 +91,9 @@ module.exports = {
         }
     },
   async getUpdate(req, res) {
+    if (!req.session.usuario || req.session.usuario.tipo === 'LEITOR') {
+        return res.status(403).send("Acesso negado. Você não tem permissão para editar livros.");
+    }
     try {
       const livro = await db.Livro.findByPk(req.params.id, {
         include: [
@@ -109,6 +118,9 @@ module.exports = {
     }
   },
   async postUpdate(req, res) {
+    if (!req.session.usuario || req.session.usuario.tipo === 'LEITOR') {
+      return res.status(403).send("Acesso negado.");
+    }
     try {
       // Validação simples
       if (!req.body.titulo || !req.body.ano || !req.body.id_categoria || !req.body.id_autores) {
@@ -158,6 +170,9 @@ module.exports = {
 },
 
   async getDelete(req, res) {
+    if (!req.session.usuario || req.session.usuario.tipo === 'LEITOR') {
+    return res.status(403).send("Acesso negado.");
+  }
     try {
       const livro = await db.Livro.findByPk(req.params.id);
       if (!livro) {

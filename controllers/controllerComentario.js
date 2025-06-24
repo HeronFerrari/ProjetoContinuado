@@ -28,20 +28,39 @@ mongoose.connect (db_mongoose.connection)
  }
 },
 
-  async postCreate (req, res) {
-    try {
-      await new Comentario({
-      texto: req.body.texto,
-      titulo: req.body.titulo,
-      id_usuario: req.session.usuario.id,
-      id_livro: req.body.id_livro
-    }).save()
-    res.redirect ('/home');
+async postCreate(req, res) {
+  try {
+    const usuarioLogado = req.session.usuario;
+
+    // 1. VERIFICAÇÃO DE SEGURANÇA: Garante que o usuário está logado.
+    if (!usuarioLogado) {
+      // Poderia redirecionar para o login ou enviar um erro.
+      return res.status(401).send("Acesso negado. Você precisa estar logado para comentar.");
+    }
+
+    // 2. VALIDAÇÃO DE DADOS: Garante que os campos não estão vazios.
+    const { titulo, texto, id_livro } = req.body;
+    if (!titulo || !texto || !id_livro) {
+      // Idealmente, redirecionar de volta com uma mensagem de erro.
+      return res.status(400).send("Título, texto e ID do livro são obrigatórios.");
+    }
+    
+    // 3. CRIAÇÃO SEGURA: Usa o método .create() do Mongoose
+    await Comentario.create({
+      titulo: titulo,
+      texto: texto,
+      id_livro: id_livro,
+      id_usuario: usuarioLogado.id // Agora temos certeza que usuarioLogado.id existe
+    });
+
+    // 4. Redireciona para a lista de comentários ou para a página do livro
+    res.redirect('/comentarioList');
+
   } catch (err) {
-    console.log (err);
-    res.status(400).send("Erro ao criar comentário: " + err.message);
+    console.log(err);
+    res.status(500).send("Erro interno ao tentar criar o comentário.");
   }
-  },
+},
 
  async getList(req, res) {
   try{
@@ -110,22 +129,62 @@ mongoose.connect (db_mongoose.connection)
     }
   },
 
-  async postUpdate(req, res) {
+async postUpdate(req, res) {
   try {
-    await Comentario.findByIdAndUpdate(req.body.id_comentario, {
+    const idComentario = req.body.id_comentario;
+    const usuarioLogado = req.session.usuario;
+
+    // 1. Verificação inicial: o usuário está logado?
+    if (!usuarioLogado) {
+      return res.status(401).send("Acesso negado. Você precisa estar logado.");
+    }
+
+    // 2. Busque o comentário no banco e ESPERE a resposta com 'await'
+    const comentario = await Comentario.findById(idComentario);
+
+    // 3. Verifique se o comentário foi encontrado
+    if (!comentario) {
+      return res.status(404).send("Comentário não encontrado.");
+    }
+
+    // 4. Cheque as permissões DEPOIS de ter o comentário em mãos
+    const isDono = comentario.id_usuario.toString() === usuarioLogado.id.toString();
+
+    // Se não for o dono E não for um admin, bloqueie o acesso.
+    if (!isDono && !isAdmin) {
+      return res.status(403).send("Acesso negado. Você não tem permissão para editar este comentário.");
+    }
+
+    // 5. Se passou por todas as verificações, atualize o documento
+    await Comentario.findByIdAndUpdate(idComentario, {
       titulo: req.body.titulo,
       texto: req.body.texto,
     });
+    
+    // 6. Redirecione com sucesso
     res.redirect('/comentarioList');
+
   } catch (err) {
     console.log(err);
-    res.status(500).send("Erro ao atualizar comentário.");
+    res.status(500).send("Erro ao atualizar o comentário.");
   }
 },
+
 async getDelete(req, res) {
   try {
-    await Comentario.findByIdAndDelete(req.params.id);
-    res.redirect('/comentarioList');
+    const usuarioLogado = req.session.usuario;
+    // Verifica se o usuário é ADMIN ou se é o autor do comentário
+    if (!usuarioLogado || usuarioLogado.tipo !== 'ADMIN' && Comentario.findById(req.params.id).id_usuario.toString() !== usuarioLogado.id.toString()) {
+      return res.status(403).send("Acesso negado. Você não tem permissão para deletar comentários.");
+    }
+    // Obtém o ID do comentário a ser deletado
+    const idComentario = req.params.id;
+    // Verifica se o comentário existe
+    const comentarioDeletado = await Comentario.findByIdAndDelete(idComentario);
+    // Se o comentário não foi encontrado, retorna 404
+    if(!comentarioDeletado) {
+      return res.status(404).send("Comentário não encontrado.");
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send("Erro ao deletar comentário.");

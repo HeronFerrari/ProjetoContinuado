@@ -15,7 +15,12 @@ module.exports = (sequelize, DataTypes) => {
     id_categoria: { 
       type: DataTypes.INTEGER,
       references: { model: 'Categoria', key: 'id_categoria' }, 
-      allowNull: false }
+      allowNull: false },
+    status: { 
+      type: DataTypes.ENUM('DISPONIVEL', 'EMPRESTADO', 'RESERVADO'), 
+      allowNull: false, 
+      defaultValue: 'DISPONIVEL' 
+    },
   });
   return Livro;
 };

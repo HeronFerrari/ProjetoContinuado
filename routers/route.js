@@ -72,6 +72,7 @@ route.post('/livroUpdate', controllerLivro.postUpdate);
 route.get('/livroDelete/:id', controllerLivro.getDelete);
 
 //Controller Emprestimo e reserva
+route.get('/emprestimoCreate', controllerEmprestimo.getCreate);
 route.post('/emprestimoCreate', controllerEmprestimo.postCreate);
 route.post('/devolucao', controllerEmprestimo.devolverLivro);
 route.post('/reserva', controllerReserva.criarReserva);
@@ -83,4 +84,4 @@ route.get('/autorCreate', controllerAutor.getCreate);
 route.post('/autorCreate', controllerAutor.postCreate);
 route.get('/autorUpdate/:id_autor', controllerAutor.getUpdate);
 route.post('/autorUpdate/:id_autor', controllerAutor.postUpdate);
-route.get('/autorDelete/:id_autor', controllerAutor.getDelete);
+route.post('/autorDelete/:id_autor', controllerAutor.postDelete);

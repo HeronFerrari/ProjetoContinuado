@@ -1,71 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <title>Sistema da biblioteca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <title>Sistema da Biblioteca</title>
   </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">Sistema de Biblioteca</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav ml-auto">
-      {{#if usuario}}
-        <li class="nav-item"><a class="nav-link" href="/logout">Sair</a></li>
-      {{else}}
-        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-      {{/if}}
-    </ul>
-  </div>
-</nav>
-<div class="container mt-4">
-  {{#unless hideMenu}}
-    <div class="btn-group mb-4" role="group">
-      {{#if usuario}}
-        {{#if (eq usuario.tipo 1) }}
-          <a href="/usuarioCreate" class="btn btn-outline-primary">Cadastrar Usuário</a>
-          <a href="/usuarioList" class="btn btn-outline-primary">Listar Usuários</a>
-          <a href="/categoriaCreate" class="btn btn-outline-primary">Cadastrar Categorias</a>
-          <a href="/categoriaList" class="btn btn-outline-primary">Listar Categorias</a>
-          <a href="/livroCreate" class="btn btn-outline-primary">Cadastrar Livro</a>
-          <a href="/livroList" class="btn btn-outline-primary">Listar Livros</a>
-          <a href="/comentarioCreate" class="btn btn-outline-primary">Cadastrar Comentário</a>
-          <a href="/comentarioList" class="btn btn-outline-primary">Listar Comentários</a>
-          <a href="/logout" class="btn btn-danger">Sair</a>
-        {{/if}}
-        {{#if (eq usuario.tipo 2) }}
-          <a href="/livroList" class="btn btn-outline-primary">Listar Livros</a>
-          <a href="/comentarioCreate" class="btn btn-outline-primary">Cadastrar Comentário</a>
-          <a href="/comentarioList" class="btn btn-outline-primary">Listar Comentários</a>
-          <a href="/logout" class="btn btn-danger">Sair</a>
-        {{/if}}
-        {{#if (eq usuario.tipo 3) }}
-          <a href="/livroList" class="btn btn-outline-primary">Listar Livros</a>
-          <a href="/comentarioList" class="btn btn-outline-primary">Listar Comentários</a>
-          <a href="/emprestimoCreate" class="btn btn-outline-primary">Solicitar Empréstimo</a>
-          <a href="/reservaCreate" class="btn btn-outline-primary">Reservar Livro</a>
-          <a href="/logout" class="btn btn-danger">Sair</a>
-        {{/if}}
-      {{else}}
-        <a href="/login" class="btn btn-outline-primary">Login</a>
-        <a href="/usuarioCreate" class="btn btn-outline-primary">Cadastrar Usuário</a>
-      {{/if}}
+  {{! Renderiza o nosso menu/cabeçalho a partir do arquivo partial }}
+  {{> header}}
+  
+  <div class="container mt-4">
+    <div class="content-area">
+      {{{ body }}}
     </div>
-  {{/unless}}
-  <div class="content-area">
-    {{{ body }}}
   </div>
-</div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 </body>
 </html>

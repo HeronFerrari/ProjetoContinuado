@@ -72,9 +72,9 @@
         <div class="form-group">
           <label for="tipoUsuario">Tipo de Usuário</label>
           <select class="form-control" name="tipo" id="tipoUsuario" required>
-            <option value="3">Leitor</option>
-            <option value="2">Bibliotecário</option>
-            <option value="1">Administrador</option>
+            <option value="LEITOR">Leitor</option>
+            <option value="BIBLIOTECARIO">Bibliotecário</option>
+            <option value="ADMIN">Administrador</option>
           </select>
         </div>
         <div id="credenciaisSuperior" style="display:none;">
@@ -103,7 +103,7 @@
     const tipo = document.getElementById('tipoUsuario').value;
     const credenciais = document.getElementById('credenciaisSuperior');
     const superiorSenha = document.getElementById('superior_senha');
-    if (tipo == '1' || tipo == '2') {
+    if (tipo === 'ADMIN' || tipo === 'BIBLIOTECARIO') {
       credenciais.style.display = 'block';
       superiorSenha.required = true;
     } else {

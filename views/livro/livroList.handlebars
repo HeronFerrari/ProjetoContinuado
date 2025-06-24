@@ -1,6 +1,9 @@
 <!-- Lista de livros -->
 <h1 class="mb-4">Lista de Livros</h1>
 <a href="/home" class="btn btn-secondary mb-3">Voltar</a>
+
+<pre style="background-color: #eee0e0; border: 2px solid rgb(224, 208, 208); padding: 10px; font-weight: bold;">DEBUG USUÁRIO: {{json usuario}}</pre>
+
 <table class="table table-striped table-bordered">
   <thead class="thead-dark">
     <tr>
@@ -12,22 +15,43 @@
     </tr>
   </thead>
   <tbody>
-    {{#each livros}}
-      <tr>
-        <td>{{toUpperCase titulo}}</td>
-        <td>{{ano}}</td>
-        <td>{{Categoria.nome}}</td>
-        <td>{{Categoria.tipo}}</td>
-        <td>
+  {{#each livros}}
+    <tr>
+      <td>{{toUpperCase titulo}}</td>
+      <td>{{ano}}</td>
+      <td>{{Categoria.nome}}</td>
+      <td>{{Categoria.tipo}}</td>
+
+      <td>
+        {{#if (any (eq ../usuario.tipo 'ADMIN') (eq ../usuario.tipo 'BIBLIOTECARIO'))}}
           <a href="/livroUpdate/{{id_livro}}" class="btn btn-sm btn-primary">Editar</a>
           <a href="/livroDelete/{{id_livro}}" class="btn btn-sm btn-danger ml-2">Deletar</a>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="5">
-          <pre>{{json this}}</pre>
-        </td>
-      </tr>
-    {{/each}}
-  </tbody>
+
+        {{else}}
+          {{#if (eq status 'DISPONIVEL')}}
+            <form action="/emprestimo/create" method="POST" style="display: inline;">
+              <input type="hidden" name="id_livro" value="{{id_livro}}">
+              <button type="submit" class="btn btn-sm btn-success">Emprestar</button>
+            </form>
+          {{else}}
+            <form action="/reserva/create" method="POST" style="display: inline;">
+              <input type="hidden" name="id_livro" value="{{id_livro}}">
+              <button type="submit" class="btn btn-sm btn-warning">Reservar</button>
+            </form>
+            <span class="badge bg-secondary ml-2">Emprestado</span>
+          {{/if}}
+        {{/if}}
+      </td>
+    </tr>
+
+    {{#if (any (eq ../usuario.tipo 'ADMIN') (eq ../usuario.tipo 'BIBLIOTECARIO'))}}
+    <tr>
+      <td colspan="5" style="background-color: #f8f9fa;">
+        <pre class="mb-0">{{json this}}</pre>
+      </td>
+    </tr>
+    {{/if}}
+
+  {{/each}}
+</tbody>
 </table>

@@ -12,8 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     login: { type: DataTypes.STRING, allowNull: false, unique: true },
     senha: { type: DataTypes.STRING, allowNull: false },
-    tipo: { type: DataTypes.INTEGER, allowNull: false },
-
+    tipo: { type: DataTypes.ENUM('ADMIN', 'BIBLIOTECARIO', 'LEITOR'), 
+      allowNull: false,
+      defaultValue: 'LEITOR', 
+    },  
     //1 - Administrador
     //2 - Usuário Comum
     //3 - Bibliotecário

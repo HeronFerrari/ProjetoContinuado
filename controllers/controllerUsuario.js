@@ -31,22 +31,32 @@ module.exports = {
         senha: req.body.senha
       }
     });
+
     if (usuario) {
       req.session.usuario = usuario.toJSON(); // Salva usuário na sessão
-      res.redirect('/home');
+      req.session.save(err => {
+        if (err) { 
+          console.error('Erro ao salvar a sessão:', err);
+          return res.status(500).send("Erro ao tentar logar.");
+        }
+        res.redirect('/home');
+    });
     } else {
       res.render('usuario/login', {
         layout: 'noMenu.handlebars',
         error: "Usuário ou senha inválidos."
       });
     }
-  }  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(500).send("Erro ao tentar logar.");
   }
   },
  
   async getCreate(req, res) {
+    if (!req.session.usuario || req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BILBIOTECARIO') {
+      return res.redirect('/home'); // Redireciona se não tiver permissão
+    }
     res.render('usuario/usuarioCreate', {
       usuario: req.session.usuario, // Passa o usuário logado para o template
       hideMenu: true, // Esconde o menu na tela de cadastro
@@ -54,21 +64,20 @@ module.exports = {
   },
 
   async postCreate(req, res) {
-   
     try {
       console.log('Dados recebidos no login:', req.body);
-      const { login, senha, nome, sobrenome, email, idade, sexo, cidade, estado, nacionalidade, superior_login, superior_senha } = req.body;
-      const tipo = Number(req.body.tipo);
+      const { login, senha, nome, sobrenome, email, idade, sexo, cidade, estado, nacionalidade, tipo, superior_login, superior_senha } = req.body;
     
        // Se for cadastrar bibliotecário ou admin, exige validação do superior
-      if (tipo == 2 || tipo == 1) {
+      if (tipo === 'BIBLIOTECARIO' || tipo === 'ADMIN') {
         const superior = await db.Usuario.findOne({
         where: {
           login: superior_login,
           senha: superior_senha    
         }
       });
-      if (!superior || superior.tipo > tipo || superior.tipo === 3) {
+
+      if (!superior || superior.tipo > tipo || superior.tipo === 'LEITOR') {
         return res.render('usuario/usuarioCreate', {
           error: "Credenciais do superior inválidas ou sem permissão.",
           usuario: req.session.usuario
@@ -82,24 +91,32 @@ module.exports = {
       usuario: req.session.usuario,
       message: "Usuário cadastrado com sucesso!"
     });
-    } catch (err) {
+  } catch (err) {
       console.log(err);
       res.status(500).send("Erro ao tentar criar usuário.");
     }
   },
 
   async getList(req, res) {
-    db.Usuario.findAll().then(usuarios => {
-      res.render('usuario/usuarioList',{ 
+     if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
+        return res.redirect('/home');
+    }
+    try {
+      const usuarios = await db.Usuario.findAll();
+      res.render('usuario/usuarioList', { 
         usuarios: usuarios.map(user => user.toJSON()),
         usuario: req.session.usuario
       });
-    }).catch((err) => {
+    } catch(err) {
       console.log(err);
-    });
+      res.status(500).send("Erro ao tentar listar usuários.");
+    }
   },
 
   async getUpdate(req, res) {
+    if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
+      return res.redirect('/home');
+    }
     try {
       const usuario = await db.Usuario.findByPk(req.params.id);
       res.render('usuario/usuarioUpdate', { 
@@ -108,20 +125,58 @@ module.exports = {
         });
     } catch (err) {
       console.log(err);
+      res.status(500).send("Erro ao tentar obter usuário para atualização.");
     }
   },
 
   async postUpdate(req, res) {
-    try {
-      await db.Usuario.update(req.body, { where: { id: req.body.id } });
-      res.redirect('/usuarioList');
-    } catch (err) {
-      console.log(err);
+    if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
+     return res.redirect('/home');
+  }
+  try {
+    // 1. Cria um objeto apenas com os campos permitidos
+     const dadosParaAtualizar = {
+        login: req.body.login,
+        tipo: req.body.tipo,
+        // Adicione aqui todos os outros campos do formulário de edição
+        nome: req.body.nome,
+        sobrenome: req.body.sobrenome,
+        email: req.body.email,
+        idade: req.body.idade,
+        sexo: req.body.sexo,
+        cidade: req.body.cidade,
+        estado: req.body.estado,
+        nacionalidade: req.body.nacionalidade
+      };
+
+    // 2. Verifique se uma nova senha foi enviada e adicione-a ao objeto
+    if (req.body.senha && req.body.senha.trim() !== '') {
+        dadosParaAtualizar.senha = req.body.senha;
+    }
+    
+    // 3. Faça a atualização usando o objeto seguro
+    await db.Usuario.update(dadosParaAtualizar, { 
+      where: { id: req.body.id } 
+    });
+
+    res.redirect('/usuarioList');
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao atualizar o usuário.");
     }
   },
 
   async getDelete(req, res) {
+    if (!req.session.usuario || req.session.usuario.tipo !== 'ADMIN' || req.session.usuario.tipo !== 'BILBIOTECARIO') {
+      return res.status(403).send("Acesso negado.");
+    }
     try {
+      const idParaDeletar = req.params.id;
+      if (Number(idParaDeletar) === Number(req.session.usuario.id)) {
+            return res.redirect('/usuarioList?error=autodelete');
+      }
+
       await db.Usuario.destroy({ where: { id: req.params.id } });
       res.redirect('/usuarioList');
     } catch (err) {
