@@ -71,17 +71,29 @@ route.get('/livroUpdate/:id', controllerLivro.getUpdate);
 route.post('/livroUpdate', controllerLivro.postUpdate);
 route.get('/livroDelete/:id', controllerLivro.getDelete);
 
-//Controller Emprestimo e reserva
-route.get('/emprestimoCreate', controllerEmprestimo.getCreate);
-route.post('/emprestimoCreate', controllerEmprestimo.postCreate);
+//Controller Emprestimo
+route.post('/emprestimo/create', controllerEmprestimo.criarEmprestimo);
+
 route.post('/devolucao', controllerEmprestimo.devolverLivro);
-route.post('/reserva', controllerReserva.criarReserva);
-route.get('/reservaDelete/:id', controllerReserva.getDelete);
-route.get('/reservaList', controllerReserva.getList);
+
+route.get('/emprestimoList', controllerEmprestimo.getList);
+
+route.get('/meus-emprestimos', controllerEmprestimo.getMeusEmprestimos);
+
+//Controller Reserva
+route.post('/reserva/create', controllerReserva.criarReserva);
+
+route.get('/reservaList', controllerReserva.getList); // Para Admin e Bibliotecário
+
+route.get('/minhas-reservas', controllerReserva.getMinhasReservas); // Para Leitor
+
+route.post('/reserva/delete', controllerReserva.postDelete);
+
 
 //Controller Autor
 route.get('/autorCreate', controllerAutor.getCreate);
 route.post('/autorCreate', controllerAutor.postCreate);
 route.get('/autorUpdate/:id_autor', controllerAutor.getUpdate);
-route.post('/autorUpdate/:id_autor', controllerAutor.postUpdate);
-route.post('/autorDelete/:id_autor', controllerAutor.postDelete);
+route.post('/autorUpdate/', controllerAutor.postUpdate);
+route.post('/autorDelete/', controllerAutor.postDelete);
+route.get('/autorList', controllerAutor.getList);

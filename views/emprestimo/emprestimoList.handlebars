@@ -1,0 +1,53 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Gerenciamento de Empréstimos</h2>
+  <p>Lista de todos os empréstimos registrados no sistema.</p>
+
+  {{#if emprestimos.length}}
+    <table class="table table-hover table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>Livro</th>
+          <th>Usuário</th>
+          <th>Data do Empréstimo</th>
+          <th>Devolução Prevista</th>
+          <th>Status / Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each emprestimos}}
+          <tr>
+            <td>{{Livro.titulo}}</td>
+            <td>{{Usuario.login}}</td>
+            <td>{{formatarData data_emprestimo}}</td>
+            <td>{{formatarData data_devolucao_prevista}}</td>
+            <td>
+              {{#if (eq status 'PENDENTE')}}
+                <span class="badge bg-warning text-dark">Pendente</span>
+                <form action="/devolucao" method="POST" style="display:inline-block; margin-left: 10px;">
+                  <input type="hidden" name="id_emprestimo" value="{{id_emprestimo}}">
+                  <button type="submit" class="btn btn-sm btn-success">Registrar Devolução</button>
+                </form>
+              {{/if}}
+
+              {{#if (eq status 'ATRASADO')}}
+                <span class="badge bg-danger">Atrasado</span>
+                <form action="/devolucao" method="POST" style="display:inline-block; margin-left: 10px;">
+                  <input type="hidden" name="id_emprestimo" value="{{id_emprestimo}}">
+                  <button type="submit" class="btn btn-sm btn-success">Registrar Devolução</button>
+                </form>
+              {{/if}}
+
+              {{#if (eq status 'DEVOLVIDO')}}
+                <span class="badge bg-info">Devolvido</span>
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <div class="alert alert-secondary">Nenhum empréstimo registrado no sistema.</div>
+  {{/if}}
+
+  <a href="/home" class="btn btn-secondary mt-3">Voltar</a>
+</div>
