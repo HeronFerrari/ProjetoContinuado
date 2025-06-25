@@ -1,9 +1,45 @@
 
+const jwt = require('jsonwebtoken');
 const db = require ('../config/db_sequelize');
 const path = require ('path');
 const usuario = require('../models/relational/usuario');
 
+
+const JWT_SECRET = 'sEnHaSeCrEtA'; // Substitua pela sua chave secreta real
+
 module.exports = {
+
+   // --- NOVA FUNÇÃO DE LOGIN PARA A API ---
+  async apiLogin(req, res) {
+    try {
+      const { login, senha } = req.body;
+
+      // Busca o usuário no banco (usando a lógica de texto puro)
+      const usuario = await db.Usuario.findOne({ where: { login, senha } });
+
+      if (!usuario) {
+        return res.status(401).json({ error: 'Credenciais inválidas' });
+      }
+
+      // Se o usuário for válido, crie o token JWT
+      const payload = {
+        id: usuario.id,
+        tipo: usuario.tipo
+      };
+
+      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' }); // Token expira em 1 hora
+
+      // Retorna o token para o cliente
+      res.json({
+        message: 'Login bem-sucedido!',
+        token: token
+      });
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Erro interno no servidor.' });
+    }
+  },
 
   async getLogin (req, res ) {
   res.render ('usuario/login', { 

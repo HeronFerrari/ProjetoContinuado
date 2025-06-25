@@ -89,7 +89,6 @@ route.get('/minhas-reservas', controllerReserva.getMinhasReservas); // Para Leit
 
 route.post('/reserva/delete', controllerReserva.postDelete);
 
-
 //Controller Autor
 route.get('/autorCreate', controllerAutor.getCreate);
 route.post('/autorCreate', controllerAutor.postCreate);

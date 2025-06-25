@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Gerenciamento de Reservas</h2>
+  <p>Lista de todas as reservas ativas no sistema.</p>
+
+  {{#if reservas.length}}
+    <table class="table table-hover table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID da Reserva</th>
+          <th>Livro</th>
+          <th>Usuário (Login)</th>
+          <th>Data da Reserva</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each reservas}}
+          <tr>
+            <td>{{id_reserva}}</td>
+            <td>{{Livro.titulo}}</td>
+            <td>{{Usuario.login}}</td>
+            <td>{{formatarData data_reserva}}</td>
+            <td>
+              {{#if (eq status 'ATIVA')}}
+                <span class="badge bg-primary">Ativa</span>
+              {{else}}
+                <span class="badge bg-secondary">{{status}}</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#if (eq status 'ATIVA')}}
+                <form action="/reserva/delete" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva em nome do usuário?');">
+                  <input type="hidden" name="id_reserva" value="{{id_reserva}}">
+                  <button type="submit" class="btn btn-sm btn-danger">Forçar Cancelamento</button>
+                </form>
+              {{else}}
+                 <span class="text-muted">Nenhuma ação</span>
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <div class="alert alert-secondary">
+      Nenhuma reserva ativa no sistema no momento.
+    </div>
+  {{/if}}
+
+  <a href="/home" class="btn btn-secondary mt-3">Voltar</a>
+</div>

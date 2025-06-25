@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'sEnHaSeCrEtA'; // Substitua pela sua chave secreta real
+
 module.exports = {
     logRegister (req, res, next) {
     console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url}`);
@@ -23,5 +26,23 @@ sessionControl (req, res, next) {
     
     // Se não estiver logado e a rota não for pública, redireciona para o login
     return res.redirect('/login');
+  },
+  // Middleware para verificar o token JWT
+  verificarToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Pega o token do header "Bearer <token>"
+
+    if (!token) {
+      return res.sendStatus(401); // Não autorizado (sem token)
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, usuario) => {
+      if (err) {
+        return res.sendStatus(403); // Proibido (token inválido ou expirado)
+      }
+      req.usuarioToken = usuario; // Adiciona os dados do usuário do token à requisição
+      next(); // Passa para a próxima etapa (a rota da API)
+    });
   }
+
 };
