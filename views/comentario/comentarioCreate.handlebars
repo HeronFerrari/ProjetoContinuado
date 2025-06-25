@@ -1,34 +1,38 @@
 <div class="container" style="max-width: 500px; margin-top: 40px;">
   <div class="card shadow">
+    
     <div class="card-body">
       <h2 class="card-title text-center mb-4">Cadastrar um comentário</h2>
-      <form action="/comentarioCreate" method="post">
-        <div class="form-group">
-          <label for="texto">Texto:</label>
-          <input type="text" class="form-control" name="texto" id="texto" required>
-        </div>
-        <div class="form-group">
-          <label for="titulo">Título:</label>
-          <input type="text" class="form-control" name="titulo" id="titulo" required>
-        </div>
-        <div class="form-group">
-          <label for="id_usuario">Usuário:</label>
-          <select class="form-control" name="id_usuario" id="id_usuario" required>
-            {{#each usuarios}}
-              <option value="{{id}}">{{login}}</option>
-            {{/each}}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="id_livro">Livro:</label>
-          <select class="form-control" name="id_livro" id="id_livro" required>
+        {{#if message}}
+          <div class="alert alert-success">{{message}}</div>
+        {{/if}}
+        {{#if error}}
+          <div class="alert alert-danger">{{error}}</div>
+        {{/if}}
+
+      <form action="/comentarioCreate" method="POST">
+        <div class="mb-3">
+          <label for="id_livro" class="form-label">Sobre qual livro você quer comentar?</label>
+          <select class="form-select" name="id_livro" id="id_livro" required>
+            <option value="" disabled selected>Selecione um livro...</option>
             {{#each livros}}
               <option value="{{id_livro}}">{{titulo}}</option>
             {{/each}}
           </select>
         </div>
-        <div class="form-group d-flex justify-content-between">
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
+
+        <div class="mb-3">
+          <label for="titulo" class="form-label">Título do seu comentário</label>
+          <input type="text" class="form-control" name="titulo" id="titulo" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="texto" class="form-label">Seu comentário</label>
+          <textarea class="form-control" name="texto" id="texto" rows="4" required></textarea>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Enviar Comentário</button>
           <a href="/home" class="btn btn-secondary">Voltar</a>
         </div>
       </form>

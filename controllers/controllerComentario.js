@@ -13,20 +13,30 @@ mongoose.connect (db_mongoose.connection)
 
  module.exports = {
 
-    async getCreate (req, res) {
-      try {
-        const usuarios = await db.Usuario.findAll();
-        const livros = await db.Livro.findAll();
-        res.render ('comentario/comentarioCreate',{
-        usuarios: usuarios.map(u => u.toJSON()),
+   async getCreate(req, res) {
+    try {
+      // 1. Garante que o usuário está logado
+      if (!req.session.usuario) {
+        return res.redirect('/login');
+      }
+
+      // 2. Busca TODOS os livros no banco de dados para popular o <select>
+      const livros = await db.Livro.findAll({
+        order: [['titulo', 'ASC']]
+      });
+
+      // 3. Renderiza a página, passando a lista de livros e os dados do usuário
+      res.render('comentario/comentarioCreate', {
         livros: livros.map(l => l.toJSON()),
         usuario: req.session.usuario
       });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Erro ao buscar usuários ou livros.");
- }
-},
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Erro ao carregar a página de comentários.");
+    }
+  },
+
 
 async postCreate(req, res) {
   try {
@@ -170,25 +180,39 @@ async postUpdate(req, res) {
   }
 },
 
-async getDelete(req, res) {
-  try {
-    const usuarioLogado = req.session.usuario;
-    // Verifica se o usuário é ADMIN ou se é o autor do comentário
-    if (!usuarioLogado || usuarioLogado.tipo !== 'ADMIN' && Comentario.findById(req.params.id).id_usuario.toString() !== usuarioLogado.id.toString()) {
-      return res.status(403).send("Acesso negado. Você não tem permissão para deletar comentários.");
+  async postDelete(req, res) {
+    try {
+      const usuarioLogado = req.session.usuario;
+      const idComentario = req.body.id_comentario; // Pega o ID do corpo do formulário
+
+      if (!usuarioLogado) {
+        return res.status(401).send("Acesso negado. Você precisa estar logado.");
+      }
+
+      // 1. Busca o comentário no MongoDB
+      const comentario = await Comentario.findById(idComentario);
+      if (!comentario) {
+        return res.status(404).send("Comentário não encontrado.");
+      }
+
+      // 2. REGRA: Apenas o dono do comentário ou um admin podem deletar.
+      const isDono = comentario.id_usuario.toString() === usuarioLogado.id.toString();
+      const isAdmin = usuarioLogado.tipo === 'ADMIN';
+
+      if (!isDono && !isAdmin) {
+        return res.status(403).send("Você não tem permissão para excluir este comentário.");
+      }
+
+      // 3. Se passou nas verificações, deleta o comentário
+      await Comentario.findByIdAndDelete(idComentario);
+      
+      // Envia uma mensagem de sucesso e redireciona
+      res.redirect('/comentarioList?sucesso=Comentário excluído com sucesso');
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Erro ao excluir o comentário.");
     }
-    // Obtém o ID do comentário a ser deletado
-    const idComentario = req.params.id;
-    // Verifica se o comentário existe
-    const comentarioDeletado = await Comentario.findByIdAndDelete(idComentario);
-    // Se o comentário não foi encontrado, retorna 404
-    if(!comentarioDeletado) {
-      return res.status(404).send("Comentário não encontrado.");
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Erro ao deletar comentário.");
   }
-}
 
 }

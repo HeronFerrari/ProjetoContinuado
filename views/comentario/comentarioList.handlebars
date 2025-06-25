@@ -11,7 +11,10 @@
         <small class="text-muted"><b>Id livro:</b> {{id_livro}} | <b>Id usuário:</b> {{id_usuario}}</small>
         <div class="mt-2">
           {{#or (eq id_usuario ../usuario.id) (eq ../usuario.tipo 'ADMIN')}}
-            <a href="/comentarioDelete/{{_id}}" class="btn btn-sm btn-danger">Deletar</a>
+            <form action="/comentarioDelete" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este comentário?');">
+              <input type="hidden" name="id_comentario" value="{{_id}}">
+              <button type="submit" class="btn btn-sm btn-danger">Deletar</button>
+            </form>
           {{/or}}
           {{#ifCond id_usuario ../id_usuario}}
             <a href="/comentarioUpdate/{{_id}}" class="btn btn-sm btn-primary ml-2">Editar</a>

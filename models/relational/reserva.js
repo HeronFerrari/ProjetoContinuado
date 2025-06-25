@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW // Preenche a data automaticamente
     },
     status: {
-      type: DataTypes.ENUM('ATIVA', 'ATENDIDA', 'CANCELADA', 'EXPIRADA'),
+      type: DataTypes.ENUM('ATIVA', 'AGUARDANDO_RETIRADA', 'ATENDIDA', 'CANCELADA', 'EXPIRADA'),
       allowNull: false,
       defaultValue: 'ATIVA'
     }

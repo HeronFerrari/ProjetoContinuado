@@ -61,7 +61,7 @@ route.post('/comentarioCreate', controllerComentario.postCreate);
 route.get('/comentarioList', controllerComentario.getList);
 route.get('/comentarioUpdate/:id', controllerComentario.getUpdate);
 route.post('/comentarioUpdate', controllerComentario.postUpdate);
-route.get('/comentarioDelete/:id', controllerComentario.getDelete);
+route.post('/comentarioDelete', controllerComentario.postDelete);
 
 // Controller Livro
 route.get('/livroCreate', controllerLivro.getCreate);
