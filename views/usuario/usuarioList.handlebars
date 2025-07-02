@@ -1,11 +1,18 @@
 <!-- views/usuario/usuarioList.handlebars -->
 <div class="container mt-4">
-  <h2 class="mb-4">Lista de Usuários</h2>
+  <h2 class="mb-4">Gerenciamento de Usuários</h2>
+
+<div class="mb-3">
+    <a href="/usuarioCreate" class="btn btn-success">Novo Usuário</a>
+  </div>
+
   <table class="table table-striped table-bordered">
     <thead class="thead-dark">
       <tr>
+        <th>ID</th>
+        <th>Nome Completo</th>
         <th>Login</th>
-        <th>Senha</th>
+        <th>Email</th>
         <th>Tipo</th>
         <th>Ações</th>
       </tr>
@@ -13,17 +20,21 @@
     <tbody>
       {{#each usuarios}}
       <tr>
+        <td>{{id}}</td>
+        <td>{{nome}} {{sobrenome}}</td>
         <td>{{login}}</td>
-        <td>{{senha}}</td>
-        <td>{{tipo}}</td>
+        <td>{{email}}</td>
+        <td><span class="badge bg-secondary">{{tipo}}</span></td>
         <td>
           <a href="/usuarioUpdate/{{id}}" class="btn btn-sm btn-primary">Editar</a>
-          <a href="/usuarioDelete/{{id}}" class="btn btn-sm btn-danger ml-2">Deletar</a>
+
+          <a href="/usuarioDelete/{{id}}" class="btn btn-sm btn-danger ml-2" onclick= "return confirm ('Tem certeza que deseja excluir o usuário {{login}}? Esta ação não pode ser desfeita.');">Deletar</a>
         </td>
       </tr>
       {{/each}}
     </tbody>
   </table>
+
   <div class="d-flex justify-content-end">
     <a href="/home" class="btn btn-secondary">Voltar</a>
   </div>

@@ -5,14 +5,6 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true, 
       primaryKey: true 
     },
-    id_usuario: { 
-      type: DataTypes.INTEGER, 
-      allowNull: false 
-    },
-    id_livro: { 
-      type: DataTypes.INTEGER, 
-      allowNull: false 
-    },
     data_emprestimo: { 
       type: DataTypes.DATE, 
       allowNull: false,

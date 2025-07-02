@@ -19,20 +19,33 @@
           <tr>
             <td>{{id_reserva}}</td>
             <td>{{Livro.titulo}}</td>
-            <td>{{Usuario.login}}</td>
+            <td>{{usuario.nome}} {{usuario.sobrenome}} ({{usuario.login}})</td>
             <td>{{formatarData data_reserva}}</td>
             <td>
               {{#if (eq status 'ATIVA')}}
-                <span class="badge bg-primary">Ativa</span>
+                <span class="badge bg-primary">Na fila</span>
+              {{else if (eq status 'AGUARDANDO_RETIRADA')}}
+                 <span class="badge bg-success">Aguardando Retirada</span>
+              {{else if (eq status 'ATENDIDA')}}
+                 <span class="badge bg-info">Atendida</span>
+              {{else if (eq status 'CANCELADA')}}
+                 <span class="badge bg-secondary">Cancelada</span>
+              {{else if (eq status 'EXPIRADA')}}
+                 <span class="badge bg-danger">Expirada</span>
               {{else}}
-                <span class="badge bg-secondary">{{status}}</span>
+                 <span class="badge bg-dark">{{status}}</span>
               {{/if}}
-            </td>
             <td>
               {{#if (eq status 'ATIVA')}}
                 <form action="/reserva/delete" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva em nome do usuário?');">
                   <input type="hidden" name="id_reserva" value="{{id_reserva}}">
                   <button type="submit" class="btn btn-sm btn-danger">Forçar Cancelamento</button>
+                </form>
+              {{else if (eq status 'AGUARDANDO_RETIRADA')}}
+               {{! Permite que o admin libere um livro que não foi retirado }}
+                <form action="/reserva/expire" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja marcar esta reserva como expirada?');"> 
+                  <input type="hidden" name="id_reserva" value="{{id_reserva}}">
+                  <button type="submit" class="btn btn-sm btn-warning">Marcar como Expirada</button>
                 </form>
               {{else}}
                  <span class="text-muted">Nenhuma ação</span>

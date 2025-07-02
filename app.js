@@ -125,6 +125,8 @@ app.engine ('handlebars', handlebars.engine ({
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
             });
         },
         toUpperCase: function (text) {
@@ -135,6 +137,9 @@ app.engine ('handlebars', handlebars.engine ({
         },
         json: function(context) {
             return JSON.stringify(context, null, 2);
+        },
+        and: function (a, b) {
+        return a && b;
         },
         eq: (a, b) => a === b,
         or: function (...args) {

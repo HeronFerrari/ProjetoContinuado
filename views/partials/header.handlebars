@@ -10,9 +10,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       
       {{#if logado}}
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
           <li class="nav-item"><a class="nav-link" href="/home">Início</a></li>
-          <li class="nav-item"><a class="nav-link" href="/livroList">Ver Livros</a></li>
+          <li class="nav-item"><a class="nav-link" href="/livroList">Livros</a></li>
+          <li class="nav-item"><a class="nav-link" href="/comentarioList">Comentários</a></li>
           
           {{#if (eq usuario.tipo 'LEITOR')}}
             <li class="nav-item"><a class="nav-link" href="/meus-emprestimos">Meus Empréstimos</a></li>
@@ -20,33 +21,22 @@
             <li class="nav-item"><a class="nav-link" href="/comentarioCreate">Fazer um Comentário</a></li>
           {{/if}}
 
-          {{#if (eq usuario.tipo 'BIBLIOTECARIO')}}
+          {{#if (any (eq usuario.tipo 'ADMIN') (eq usuario.tipo 'BIBLIOTECARIO'))}}
             <li class="nav-item"><a class="nav-link" href="/livroCreate">Cadastrar Livro</a></li>
-            <li class="nav-item"><a class="nav-link" href="/emprestimoList">Ver Empréstimos</a></li>
-            <li class="nav-item"><a class="nav-link" href="/comentarioList">Ver Comentários</a></li>
+            <li class="nav-item"><a class="nav-link" href="/emprestimoList">Gerenciar Empréstimos</a></li>
+            <li class="nav-item"><a class="nav-link" href="/reservaList">Gerenciar Reservas</a></li>
+            <li class="nav-item"><a class="nav-link" href="/categoriaList">Gerenciar Categorias</a></li>
+            <li class="nav-item"><a class="nav-link" href="/autorList">Gerenciar Autores</a></li>
           {{/if}}
 
           {{#if (eq usuario.tipo 'ADMIN')}}
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
-                Administração
+                Usuários
               </a>
               <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                <li><h6 class="dropdown-header">Usuários</h6></li>
                 <li><a class="dropdown-item" href="/usuarioList">Listar Usuários</a></li>
                 <li><a class="dropdown-item" href="/usuarioCreate">Cadastrar Usuário</a></li>
-                <li><hr class="dropdown-divider"></li>
-
-                <li><h6 class="dropdown-header">Acervo</h6></li>
-                <li><a class="dropdown-item" href="/livroList">Listar Livros</a></li>
-                <li><a class="dropdown-item" href="/livroCreate">Cadastrar Livro</a></li>
-                <li><a class="dropdown-item" href="/autorList">Gerenciar Autores</a></li>
-                <li><a class="dropdown-item" href="/categoriaList">Gerenciar Categorias</a></li>
-                <li><hr class="dropdown-divider"></li>
-
-                <li><h6 class="dropdown-header">Interações</h6></li>
-                <li><a class="dropdown-item" href="/comentarioList">Ver Comentários</a></li>
-                <li><a class="dropdown-item" href="/emprestimoList">Ver Empréstimos</a></li>
               </ul>
             </li>
           {{/if}}

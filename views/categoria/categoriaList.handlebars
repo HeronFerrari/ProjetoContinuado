@@ -18,7 +18,7 @@
         <td>{{nome}}</td>
         <td>{{tipo}}</td>
         <td><a href="/categoriaUpdate/{{id_categoria}}" class="btn btn-sm btn-primary">Editar</a></td>
-        <td><a href="/categoriaDelete/{{id_categoria}}" class="btn btn-sm btn-danger">Deletar</a></td>
+        <td><a href="/categoriaDelete/{{id_categoria}}" class="btn btn-sm btn-danger" onclick="return confirm('A categoria será deletada, deseja prosseguir ?');">Deletar</a></td>
       </tr>
       {{/each}}
     </tbody>

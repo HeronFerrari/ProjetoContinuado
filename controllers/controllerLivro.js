@@ -73,23 +73,35 @@ module.exports = {
     }
   },
 
-    async getList(req, res) {
-        try {
-        const livros = await db.Livro.findAll({
-            include: [
-              {model: db.Categoria, as: 'Categoria', attributes: ['id_categoria', 'nome', 'tipo']},
-              {model: db.Autor, as: 'Autores', attributes: ['id_autor', 'nome']}
-            ]
-        });
-        res.render('livro/livroList', {
-            livros: livros.map(livro => livro.toJSON()),
-            usuario: req.session.usuario
-        });
-        } catch (err) {
-        console.log(err);
-        res.status(500).send("Erro ao listar livros.");
+  async getList(req, res) {
+  try {
+    const livros = await db.Livro.findAll({
+      // Incluímos os dados das categorias, autores E das reservas pendentes
+      include: [
+        { model: db.Categoria, as: 'Categoria' },
+        { model: db.Autor, as: 'Autores' },
+        {
+          model: db.Reserva,
+          as: 'Reservas', 
+          where: { status: 'AGUARDANDO_RETIRADA' },
+          required: false // Garante que livros sem reserva também apareçam (LEFT JOIN)
+        },
+        { model: db.Emprestimo, as: 'Emprestimos',
+          where: { status: 'PENDENTE' }, 
+          required: false 
         }
-    },
+      ]
+    });
+
+    res.render('livro/livroList', {
+      livros: livros.map(l => l.toJSON()),
+      usuario: req.session.usuario
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao carregar a lista de livros.");
+  }
+},
   async getUpdate(req, res) {
     if (!req.session.usuario || req.session.usuario.tipo === 'LEITOR') {
         return res.status(403).send("Acesso negado. Você não tem permissão para editar livros.");

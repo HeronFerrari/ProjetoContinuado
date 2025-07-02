@@ -73,21 +73,17 @@ route.get('/livroDelete/:id', controllerLivro.getDelete);
 
 //Controller Emprestimo
 route.post('/emprestimo/create', controllerEmprestimo.criarEmprestimo);
-
 route.post('/devolucao', controllerEmprestimo.devolverLivro);
-
+route.post('/emprestimo/delete', controllerEmprestimo.postDelete);
 route.get('/emprestimoList', controllerEmprestimo.getList);
-
 route.get('/meus-emprestimos', controllerEmprestimo.getMeusEmprestimos);
 
 //Controller Reserva
 route.post('/reserva/create', controllerReserva.criarReserva);
-
 route.get('/reservaList', controllerReserva.getList); // Para Admin e Bibliotecário
-
 route.get('/minhas-reservas', controllerReserva.getMinhasReservas); // Para Leitor
-
 route.post('/reserva/delete', controllerReserva.postDelete);
+route.post('/reserva/expire', controllerReserva.postExpireReserva); // Para Admin e Bibliotecário
 
 //Controller Autor
 route.get('/autorCreate', controllerAutor.getCreate);

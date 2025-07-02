@@ -27,7 +27,7 @@ db.Usuario.hasMany(db.Emprestimo, { foreignKey: 'id_usuario' });
 db.Emprestimo.belongsTo(db.Usuario, { foreignKey: 'id_usuario' });
 
 // Livro 1:N Emprestimo
-db.Livro.hasMany(db.Emprestimo, { foreignKey: 'id_livro' });
+db.Livro.hasMany(db.Emprestimo, { foreignKey: 'id_livro', as: 'Emprestimos' });
 db.Emprestimo.belongsTo(db.Livro, { foreignKey: 'id_livro' });
 
 // Usuario 1:N Reserva
@@ -36,7 +36,7 @@ db.Reserva.belongsTo(db.Usuario, { foreignKey: 'id_usuario' });
 
 // Livro 1:N Reserva
 db.Livro.hasMany(db.Reserva, { foreignKey: 'id_livro' });
-db.Reserva.belongsTo(db.Livro, { foreignKey: 'id_livro' });
+db.Reserva.belongsTo(db.Livro, { foreignKey: 'id_livro', as: 'Livro' });
 
 db.sequelize.sync({alter: true}).then(async() => {
   console.log('Tabelas sincronizadas');

@@ -101,37 +101,70 @@ module.exports = {
 
   async postCreate(req, res) {
     try {
-      console.log('Dados recebidos no login:', req.body);
-      const { login, senha, nome, sobrenome, email, idade, sexo, cidade, estado, nacionalidade, tipo, superior_login, superior_senha } = req.body;
-    
-       // Se for cadastrar bibliotecário ou admin, exige validação do superior
-      if (tipo === 'BIBLIOTECARIO' || tipo === 'ADMIN') {
-        const superior = await db.Usuario.findOne({
-        where: {
-          login: superior_login,
-          senha: superior_senha    
-        }
-      });
+    const dadosNovosUsuario = req.body;
+    const usuarioLogado = req.session.usuario;
+    const tipoNovoUsuario = dadosNovosUsuario.tipo;
 
-      if (!superior || superior.tipo > tipo || superior.tipo === 'LEITOR') {
+     if (usuarioLogado.tipo === 'BIBLIOTECARIO') {
+      // ...ele SÓ pode criar LEITORES.
+      if (tipoNovoUsuario !== 'LEITOR') {
         return res.render('usuario/usuarioCreate', {
-          error: "Credenciais do superior inválidas ou sem permissão.",
+          error: "Acesso negado. Bibliotecários só podem cadastrar usuários do tipo Leitor.",
+          usuario: usuarioLogado
+        });
+      }
+      // Se for um leitor, não precisa de validação de superior, a criação pode prosseguir.
+    }
+
+    // REGRA 2: Se um ADMIN está logado...
+    if (usuarioLogado.tipo === 'ADMIN') {
+      // ...e está tentando criar outro ADMIN ou um BIBLIOTECÁRIO...
+      if (tipoNovoUsuario === 'ADMIN' || tipoNovoUsuario === 'BIBLIOTECARIO') {
+        // ...ele precisa confirmar suas próprias credenciais como 'superior'.
+        const superior = await db.Usuario.findOne({
+          where: {
+            login: dadosNovosUsuario.superior_login,
+            senha: dadosNovosUsuario.superior_senha
+          }
+        });
+        // O 'superior' deve ser o próprio admin logado.
+        if (!superior || superior.id !== usuarioLogado.id || superior.tipo !== 'ADMIN') {
+          return res.render('usuario/usuarioCreate', {
+            error: "Credenciais de Administrador inválidas para autorizar esta criação.",
+            usuario: usuarioLogado
+          });
+        }
+      }
+    }
+    
+
+
+    if (dadosNovosUsuario.estado) {
+      dadosNovosUsuario.estado = dadosNovosUsuario.estado.toUpperCase();
+    }
+
+    await db.Usuario.create(dadosNovosUsuario);
+     // Exibe mensagem de sucesso na tela de cadastro
+    return res.render('usuario/usuarioCreate', {
+      usuario: usuarioLogado,
+      message: `Usuário '${dadosNovosUsuario.login}' criado com sucesso!`
+    });
+  } catch (err) {
+      if (err instanceof db.Sequelize.ValidationError) {
+        const errorMessages = err.errors.map(e => e.message).join('. ');
+        return res.render('usuario/usuarioCreate', {
+          error: `Erro de validação: ${errorMessages}`,
           usuario: req.session.usuario
         });
       }
-    }
-
-    await db.Usuario.create({ login, senha, nome, sobrenome, email, idade, sexo, cidade, estado, nacionalidade, tipo });
-     // Exibe mensagem de sucesso na tela de cadastro
-    return res.render('usuario/usuarioCreate', {
-      usuario: req.session.usuario,
-      message: "Usuário cadastrado com sucesso!"
+    console.log(err);
+    // Erro genérico para outras falhas (como login/email duplicado)
+    res.render('usuario/usuarioCreate', {
+      error: "Ocorreu um erro ao criar o usuário. O login ou e-mail podem já estar em uso.",
+      usuario: req.session.usuario
     });
-  } catch (err) {
-      console.log(err);
-      res.status(500).send("Erro ao tentar criar usuário.");
-    }
-  },
+  }
+},
 
   async getList(req, res) {
      if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
@@ -172,18 +205,22 @@ module.exports = {
   try {
     // 1. Cria um objeto apenas com os campos permitidos
      const dadosParaAtualizar = {
-        login: req.body.login,
-        tipo: req.body.tipo,
-        // Adicione aqui todos os outros campos do formulário de edição
-        nome: req.body.nome,
-        sobrenome: req.body.sobrenome,
-        email: req.body.email,
-        idade: req.body.idade,
-        sexo: req.body.sexo,
-        cidade: req.body.cidade,
-        estado: req.body.estado,
-        nacionalidade: req.body.nacionalidade
-      };
+      nome: req.body.nome,
+      sobrenome: req.body.sobrenome,
+      email: req.body.email,
+      idade: req.body.idade,
+      sexo: req.body.sexo,
+      telefone: req.body.telefone,
+      cidade: req.body.cidade,
+      estado: req.body.estado,
+      nacionalidade: req.body.nacionalidade,
+      login: req.body.login,
+      tipo: req.body.tipo,
+    };
+
+    if (dadosParaAtualizar.estado) {
+      dadosParaAtualizar.estado = dadosParaAtualizar.estado.toUpperCase();
+    }
 
     // 2. Verifique se uma nova senha foi enviada e adicione-a ao objeto
     if (req.body.senha && req.body.senha.trim() !== '') {
@@ -204,19 +241,20 @@ module.exports = {
   },
 
   async getDelete(req, res) {
-    if (!req.session.usuario || req.session.usuario.tipo !== 'ADMIN' || req.session.usuario.tipo !== 'BILBIOTECARIO') {
-      return res.status(403).send("Acesso negado.");
+    if (!req.session.usuario || req.session.usuario.tipo !== 'ADMIN') {
+      return res.status(403).send("Acesso negado. Você não tem permissão para realizar esta ação.");
     }
     try {
       const idParaDeletar = req.params.id;
       if (Number(idParaDeletar) === Number(req.session.usuario.id)) {
-            return res.redirect('/usuarioList?error=autodelete');
+            return res.redirect('/usuarioList?error=Você não pode deletar sua própria conta.');
       }
 
-      await db.Usuario.destroy({ where: { id: req.params.id } });
-      res.redirect('/usuarioList');
+      await db.Usuario.destroy({ where: { id: idParaDeletar } });
+      res.redirect('/usuarioList?sucesso=Usuário deletado com sucesso!');
     } catch (err) {
       console.log(err);
+      res.status(500).send("Ocorreu um erro ao tentar deletar o usuário.");
     }
   }
 

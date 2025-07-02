@@ -1,8 +1,13 @@
-<!-- Lista de livros -->
-<h1 class="mb-4">Lista de Livros</h1>
-<a href="/home" class="btn btn-secondary mb-3">Voltar</a>
 
-<pre style="background-color: #eee0e0; border: 2px solid rgb(224, 208, 208); padding: 10px; font-weight: bold;">DEBUG USUÁRIO: {{json usuario}}</pre>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="mb-4">Lista de Livros</h1>
+  {{#if (any (eq usuario.tipo 'ADMIN') (eq usuario.tipo 'BIBLIOTECARIO'))}}
+      <a href="/livroCreate" class="btn btn-success">Cadastrar Novo Livro</a>
+  {{/if}}
+  <a href="/home" class="btn btn-secondary mb-3">Voltar</a>
+  </div>
+
+<!-- <pre style="background-color: #eee0e0; border: 2px solid rgb(224, 208, 208); padding: 10px; font-weight: bold;">DEBUG USUÁRIO: {{json usuario}}</pre> -->
 
 <table class="table table-striped table-bordered">
   <thead class="thead-dark">
@@ -11,6 +16,7 @@
       <th>Ano</th>
       <th>Gênero</th>
       <th>Tipo</th>
+      <th>Status</th>
       <th>Ações</th>
     </tr>
   </thead>
@@ -21,24 +27,60 @@
       <td>{{ano}}</td>
       <td>{{Categoria.nome}}</td>
       <td>{{Categoria.tipo}}</td>
+      <td>
+          {{! Badge de Status para todos verem }}
+          {{#if (eq status 'DISPONIVEL')}}
+            <span class="badge bg-success">Disponível</span>
+            {{else}}
+            {{#if (eq status 'RESERVADO')}}
+              <span class="badge bg-info">Reservado</span>
+            {{else}}
+            {{#if (eq status 'EMPRESTADO')}}
+            <span class="badge bg-secondary">Emprestado</span>
+            {{/if}}
+          {{/if}}
+        {{/if}}
+        </td>
 
       <td>
         {{#if (any (eq ../usuario.tipo 'ADMIN') (eq ../usuario.tipo 'BIBLIOTECARIO'))}}
           <a href="/livroUpdate/{{id_livro}}" class="btn btn-sm btn-primary">Editar</a>
-          <a href="/livroDelete/{{id_livro}}" class="btn btn-sm btn-danger ml-2">Deletar</a>
-
+          <a href="/livroDelete/{{id_livro}}" class="btn btn-sm btn-danger ml-2" onclick="return confirm('Tem certeza que deseja excluir o livro \'{{titulo}}\'?');">Deletar</a>
         {{else}}
+
           {{#if (eq status 'DISPONIVEL')}}
+            <span class="badge bg-dark">{{status}}</span>
             <form action="/emprestimo/create" method="POST" style="display: inline;">
               <input type="hidden" name="id_livro" value="{{id_livro}}">
               <button type="submit" class="btn btn-sm btn-success">Emprestar</button>
             </form>
+
           {{else}}
-            <form action="/reserva/create" method="POST" style="display: inline;">
-              <input type="hidden" name="id_livro" value="{{id_livro}}">
-              <button type="submit" class="btn btn-sm btn-warning">Reservar</button>
-            </form>
-            <span class="badge bg-secondary ml-2">Emprestado</span>
+            {{#if (eq status 'RESERVADO')}}
+              {{#if (and Reservas.[0] (eq Reservas.[0].id_usuario ../usuario.id))}}
+              <span class="badge bg-success">Aguardando sua Retirada</span>
+              <form action="/emprestimo/create" method="POST" class="ajax-form" style="display: inline; margin-left: 10px;">
+               <input type="hidden" name="id_livro" value="{{id_livro}}">
+               <button type="submit" class="btn btn-sm btn-success">Pegar Emprestado</button>
+              </form>
+            
+            {{else}}
+              <span class="badge bg-secondary">Reservado</span>
+            {{/if}}
+
+            {{else}}
+              {{#if (eq status 'EMPRESTADO')}} 
+                {{#if (and Emprestimos.[0] (eq Emprestimos.[0].id_usuario ../usuario.id))}}
+                  <span class="badge bg-info">Emprestado por você</span>
+                {{else}}
+                  <span class="badge bg-dark">{{status}}</span>
+                  <form action="/reserva/create" method="POST" class="ajax-form" style="display: inline;">
+                    <input type="hidden" name="id_livro" value="{{id_livro}}">
+                    <button type="submit" class="btn btn-sm btn-warning">Reservar</button>
+                  </form>
+                {{/if}}
+              {{/if}}
+            {{/if}}
           {{/if}}
         {{/if}}
       </td>

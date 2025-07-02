@@ -6,9 +6,6 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true
     },
-    // As colunas id_usuario e id_livro serão criadas automaticamente pelas associações
-    // que você já definiu no seu arquivo de configuração do banco.
-    
     data_reserva: {
       type: DataTypes.DATE,
       allowNull: false,

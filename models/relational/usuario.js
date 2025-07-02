@@ -16,9 +16,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'LEITOR', 
     },  
-    //1 - Administrador
-    //2 - Usuário Comum
-    //3 - Bibliotecário
   });
   return Usuario;
 };

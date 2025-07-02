@@ -6,7 +6,7 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('Livros', 'id_autor', {
       type: Sequelize.INTEGER,
-      allowNull: false // ou true, se quiser permitir nulo no rollback
+      allowNull: false 
     });
   }
 };
