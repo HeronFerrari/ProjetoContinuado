@@ -1,8 +1,35 @@
 <div class="container mt-4">
   <h2 class="mb-4">Minhas Reservas</h2>
 
+  <div class="card card-body mb-4">
+    <h5 class="card-title">Filtrar Minhas Reservas</h5>
+    <form action="/minhas-reservas" method="GET" class="row g-3 align-items-end">
+      <div class="col-md-6">
+        <label for="busca" class="form-label">Buscar por Título</label>
+        <input type="text" class="form-control" name="busca" id="busca" value="{{query.busca}}" placeholder="Digite o título do livro...">
+      </div>
+      <div class="col-md-4">
+        <label for="status" class="form-label">Mostrar Status</label>
+        <select name="status" id="status" class="form-select">
+          <option value="">Todos</option>
+          <option value="ATIVA" {{#if (eq query.status 'ATIVA')}}selected{{/if}}>Na Fila</option>
+          <option value="AGUARDANDO_RETIRADA" {{#if (eq query.status 'AGUARDANDO_RETIRADA')}}selected{{/if}}>Aguardando Retirada</option>
+          <option value="ATENDIDA" {{#if (eq query.status 'ATENDIDA')}}selected{{/if}}>Atendida</option>
+          <option value="CANCELADA" {{#if (eq query.status 'CANCELADA')}}selected{{/if}}>Cancelada</option>
+          <option value="EXPIRADA" {{#if (eq query.status 'EXPIRADA')}}selected{{/if}}>Expirada</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+      </div>
+    </form>
+  </div>
+  {{#if sucesso}}
+    <div class="alert alert-success">{{sucesso}}</div>
+  {{/if}}
+
   {{#if reservas.length}}
-    <p>Aqui estão os livros que você reservou. Você será notificado quando eles estiverem disponíveis.</p>
+    <p>Aqui estão os livros que você reservou.</p>
     <div class="list-group shadow-sm">
       {{#each reservas}}
         <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -11,33 +38,30 @@
             <small>Reservado em: {{formatarData data_reserva}}</small>
           </div>
           
-          <div>
-           {{#if (eq status 'ATIVA')}}
-             <span class="badge bg-primary">Na Fila</span>
-           {{else if (eq status 'AGUARDANDO_RETIRADA')}}
-             <span class="badge bg-success">Aguardando Retirada</span>
-           {{else if (eq status 'ATENDIDA')}}
-             <span class="badge bg-info">Atendida</span>
-           {{else if (eq status 'CANCELADA')}}
-             <span class="badge bg-secondary">Cancelada</span>
-           {{else if (eq status 'EXPIRADA')}}
-             <span class="badge bg-danger">Expirada</span>
-           {{else}}
-             <span class="badge bg-dark">{{status}}</span>
-           {{/if}}
-           {{#if (eq status 'ATIVA')}}
-              <form action="/reserva/delete" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');">
+          <div class="d-flex align-items-center">
+            {{#if (eq status 'ATIVA')}}
+              <span class="badge bg-primary rounded-pill me-3">Na Fila</span>
+              <form action="/reserva/delete" method="POST" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');">
                 <input type="hidden" name="id_reserva" value="{{id_reserva}}">
-                <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar Reserva</button>
+                <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
               </form>
+            {{else if (eq status 'AGUARDANDO_RETIRADA')}}
+              <span class="badge bg-success rounded-pill me-3">Pronto para Retirada!</span>
+            {{else if (eq status 'ATENDIDA')}}
+              <span class="badge bg-info rounded-pill me-3">Atendida</span>
+            {{else if (eq status 'CANCELADA')}}
+              <span class="badge bg-secondary rounded-pill me-3">Cancelada</span>
+            {{else if (eq status 'EXPIRADA')}}
+              <span class="badge bg-danger rounded-pill me-3">Expirada</span>
             {{/if}}
           </div>
+
         </div>
       {{/each}}
     </div>
   {{else}}
     <div class="alert alert-info">
-      Você não possui reservas ativas no momento.
+      Você não possui nenhuma reserva para os filtros selecionados.
     </div>
   {{/if}}
 

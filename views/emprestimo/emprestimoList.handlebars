@@ -2,8 +2,46 @@
   <h2 class="mb-4">Gerenciamento de Empréstimos</h2>
   <p>Lista de todos os empréstimos registrados no sistema.</p>
 
+  <div class="card card-body mb-4">
+    <h5 class="card-title">Filtrar Empréstimos</h5>
+    <form action="/emprestimoList" method="GET" class="row g-3 align-items-end">
+
+      <div class="col-md-4">
+        <label for="busca" class="form-label">Buscar por Livro ou Usuário</label>
+        <input type="text" class="form-control" name="busca" id="busca" value="{{query.busca}}" placeholder="Título do livro ou nome do usuário...">
+      </div>
+
+      <div class="col-md-2">
+        <label for="status" class="form-label">Status</label>
+        <select name="status" id="status" class="form-select">
+          <option value="">Todos</option>
+          <option value="PENDENTE" {{#if (eq query.status 'PENDENTE')}}selected{{/if}}>Pendente</option>
+          <option value="DEVOLVIDO" {{#if (eq query.status 'DEVOLVIDO')}}selected{{/if}}>Devolvido</option>
+          <option value="ATRASADO" {{#if (eq query.status 'ATRASADO')}}selected{{/if}}>Atrasado</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label for="dataInicio" class="form-label">De</label>
+        <input type="date" class="form-control" name="dataInicio" id="dataInicio" value="{{query.dataInicio}}">
+      </div>
+      <div class="col-md-2">
+        <label for="dataFim" class="form-label">Até</label>
+        <input type="date" class="form-control" name="dataFim" id="dataFim" value="{{query.dataFim}}">
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+      </div>
+    </form>
+  </div>
+
+
+
   {{#if sucesso}}
-    <div class="alert alert-success">{{sucesso}}</div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{sucesso}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   {{/if}}
 
   {{#if emprestimos.length}}
@@ -20,29 +58,41 @@
       <tbody>
         {{#each emprestimos}}
           <tr>
-            <td>{{Livro.titulo}}</td>
-            <td>{{usuario.nome}} {{usuario.sobrenome}} ({{usuario.login}})</td> 
-            <td>{{formatarData data_emprestimo}}</td>
-            <td>{{formatarData data_devolucao_prevista}}</td>
-            <td>
+            <td class="align-middle">{{Livro.titulo}}</td>
+            <td class="align-middle">{{usuario.nome}} {{usuario.sobrenome}} ({{usuario.login}})</td>
+            <td class="align-middle">{{formatarData data_emprestimo}}</td>
+            <td class="align-middle">{{formatarData data_devolucao_prevista}}</td>
+            <td class="align-middle">
+
               {{#if (and (eq status 'PENDENTE') ( any (eq ../usuario.tipo 'ADMIN')(eq ../usuario.tipo 'BIBLIOTECARIO') ) )}}
                 <span class="badge bg-warning text-dark">Pendente</span>
                 <form action="/devolucao" method="POST" style="display:inline-block; margin-left: 10px;">
                   <input type="hidden" name="id_emprestimo" value="{{id_emprestimo}}">
                   <button type="submit" class="btn btn-sm btn-success">Registrar Devolução</button>
                 </form>
-              {{else if (eq status 'DEVOLVIDO')}}
-                  <span class="badge bg-info">Devolvido em {{formatarData data_devolucao_efetiva}}</span>
-              {{else if (eq status 'ATRASADO')}}
-                  <span class="badge bg-danger">Atrasado</span>
-              {{/if}}
 
-                {{#if (eq ../usuario.tipo 'ADMIN')}}
-                   <form action="/emprestimo/delete" method="POST" style="display:inline-block; margin-left: 10px;" onsubmit="return confirm('ATENÇÃO: Isso vai apagar o registro deste empréstimo permanentemente. Tem certeza?');">
-                     <input type="hidden" name="id_emprestimo" value="{{id_emprestimo}}">
-                     <button type="submit" class="btn btn-sm btn-outline-danger">Excluir Registro</button>
-                   </form>
+              {{else}} 
+                {{#if (eq status 'ATRASADO')}}
+                <span class="badge bg-danger">Atrasado</span>
+                <form action="/devolucao" method="POST" style="display:inline-block; margin-left: 10px;">
+                  <input type="hidden" name="id_emprestimo" value="{{id_emprestimo}}">
+                  <button type="submit" class="btn btn-sm btn-success">Registrar Devolução</button>
+                </form>
+
+              {{else}}
+                {{#if (eq status 'DEVOLVIDO')}}
+                  <span class="badge bg-info">Devolvido em {{formatarData data_devolucao_efetiva}}</span>
                 {{/if}}
+              {{/if}}
+            {{/if}}
+
+            {{#if (eq ../usuario.tipo 'ADMIN')}}
+              <form action="/emprestimo/delete" method="POST" style="display:inline-block; margin-left: 10px;" onsubmit="return confirm('ATENÇÃO: Isso vai apagar o registro deste empréstimo permanentemente. Tem certeza?');">
+                <input type="hidden" name="id_emprestimo" value="{{id_emprestimo}}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Excluir Registro</button>
+              </form>
+            {{/if}}
+
              </td>
             </tr>
           {{/each}}

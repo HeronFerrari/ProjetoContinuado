@@ -1,5 +1,5 @@
 const db = require('../config/db_sequelize');
-
+const { Op, fn, col, where } = require('sequelize');
 // Função para calcular a data de devolução (ex: 14 dias a partir de hoje)
 const calcularDataDevolucao = () => {
   const data = new Date();
@@ -89,72 +89,136 @@ module.exports = {
 
 
   // --- LISTAR TODOS OS EMPRÉSTIMOS (VISÃO DO ADMIN/BIBLIOTECÁRIO) ---
-  async getList(req, res) {
-  // A verificação de permissão continua a mesma
+ async getList(req, res) {
   if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
     return res.redirect('/home');
   }
   try {
-    const emprestimos = await db.Emprestimo.findAll({
+    // 1. Pega TODOS os filtros da URL (req.query)
+    const { busca, dataInicio, dataFim, status } = req.query;
 
-      include: [
-        { 
-          model: db.Usuario, 
-          attributes: ['id', 'login', 'nome', 'sobrenome'] // <-- INCLUI O USUÁRIO
-        }, 
-        { 
-          model: db.Livro, 
-          attributes: ['titulo'] 
+    // 2. Inicia a cláusula 'where' principal. Usaremos um array 'Op.and' para combinar
+    // todas as condições de forma segura.
+    const whereClause = {
+      [Op.and]: []
+    };
+
+    // 3. Adiciona os filtros dinamicamente
+    
+    // Adiciona o filtro de STATUS, se ele foi enviado e não é 'Todos'
+    if (status) {
+      whereClause[Op.and].push({ status: status });
+    }
+
+    // Adiciona o filtro de DATA, se foi enviado
+    if (dataInicio && dataFim) {
+      whereClause[Op.and].push({
+        data_emprestimo: {
+          [Op.between]: [new Date(dataInicio), new Date(new Date(dataFim).setHours(23, 59, 59))]
         }
+      });
+    } else if (dataInicio) {
+      whereClause[Op.and].push({ data_emprestimo: { [Op.gte]: new Date(dataInicio) } });
+    } else if (dataFim) {
+      whereClause[Op.and].push({ data_emprestimo: { [Op.lte]: new Date(new Date(dataFim).setHours(23, 59, 59)) } });
+    }
+
+    // Adiciona o filtro de BUSCA por texto, se foi enviado
+    if (busca) {
+      whereClause[Op.and].push({
+        [Op.or]: [
+      // 1. Busca no título do livro (continua igual)
+          { '$Livro.titulo$': { [Op.iLike]: `%${busca}%` } },
+      
+      // 2. Busca no login do usuário (continua igual)
+          { '$usuario.login$': { [Op.iLike]: `%${busca}%` } },
+
+      // 3. A NOVA BUSCA: no nome completo do usuário (concatenado)
+      // A função 'fn' cria uma função do SQL, e 'col' refere-se às colunas.
+          where(
+            fn('CONCAT', col('usuario.nome'), ' ', col('usuario.sobrenome')),
+            { [Op.iLike]: `%${busca}%` }
+          )
+        ]
+      });
+    }
+
+    // 4. Executa a busca com a cláusula 'where' unificada
+    const emprestimos = await db.Emprestimo.findAll({
+      where: whereClause,
+      include: [
+        { model: db.Usuario, as: 'usuario' }, // O 'as' é crucial para o '$usuario.nome$' funcionar
+        { model: db.Livro, as: 'Livro' }
       ],
       order: [['data_emprestimo', 'DESC']]
     });
     
-    console.log('DADOS QUE SERÃO ENVIADOS PARA A VIEW:');
-    console.log(JSON.stringify(emprestimos, null, 2)); 
-    console.log('-----------------------------------------');
-
+    // 5. Renderiza a página
     res.render('emprestimo/emprestimoList', {
       emprestimos: emprestimos.map(e => e.toJSON()),
       usuario: req.session.usuario,
-      sucesso: req.query.sucesso, 
-      error: req.query.error
+      query: req.query
     });
+
   } catch (err) {
     console.log(err);
     res.status(500).send("Erro ao listar os empréstimos.");
   }
 },
+    
   // --- LISTAR EMPRÉSTIMOS DO USUÁRIO LOGADO (VISÃO DO LEITOR) ---
-  async getMeusEmprestimos(req, res) {
-    if (!req.session.usuario) {
-      return res.redirect('/login');
+ async getMeusEmprestimos(req, res) {
+  if (!req.session.usuario) {
+    return res.redirect('/login');
+  }
+  try {
+    // 1. Pega os filtros da URL
+    const { busca, status, ordenarPor } = req.query;
+
+    // 2. Monta a cláusula 'where' dinamicamente
+    const whereClause = {
+      // REGRA DE SEGURANÇA: Sempre filtra pelo ID do usuário logado
+      id_usuario: req.session.usuario.id 
+    };
+
+    // Adiciona o filtro de status, se o usuário selecionou um
+    if (status) {
+      whereClause.status = status;
     }
-    try {
-      const emprestimos = await db.Emprestimo.findAll({
-        where: { id_usuario: req.session.usuario.id, status: 'PENDENTE' },
-        include: [{ model: db.Livro, attributes: ['titulo'] }],
-        order: [['data_emprestimo', 'DESC']]
-      });
 
-    //debugging
-    console.log('--- DEBUG DA PÁGINA MEUS EMPRÉSTIMOS ---');
-    console.log(`Buscando empréstimos PENDENTES para o usuário ID: ${req.session.usuario.id}`);
-    // Vamos ver o que a busca realmente retornou
-    console.log('EMPRÉSTIMOS ENCONTRADOS:', emprestimos.map(e => e.toJSON()));
-    console.log('------------------------------------');
-    //fim de debugging
-
-      res.render('emprestimo/meusEmprestimos', {
-        emprestimos: emprestimos.map(e => e.toJSON()),
-        usuario: req.session.usuario
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).send("Erro ao buscar seus empréstimos.");
+    // Adiciona o filtro de busca no título do livro, se o usuário digitou algo
+    if (busca) {
+      // Usamos a sintaxe especial para buscar em tabelas associadas
+      whereClause['$Livro.titulo$'] = { [Op.iLike]: `%${busca}%` };
     }
-  },
+    
+    // 3. Monta a cláusula de ordenação
+    let orderClause = [['data_emprestimo', 'DESC']]; // Padrão: mais recentes primeiro
+    if (ordenarPor === 'vencimento') {
+      orderClause = [['data_devolucao_prevista', 'ASC']]; // Ordena pelos que vencem primeiro
+    }
 
+    // 4. Executa a busca com todos os filtros e ordenação
+    const emprestimos = await db.Emprestimo.findAll({
+      where: whereClause,
+      include: [{
+        model: db.Livro,
+        as: 'Livro', // Usa o 'as' que definimos na associação
+        attributes: ['titulo']
+      }],
+      order: orderClause
+    });
+
+    res.render('emprestimo/meusEmprestimos', {
+      emprestimos: emprestimos.map(e => e.toJSON()),
+      usuario: req.session.usuario,
+      query: req.query // Passa os filtros de volta para a view
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao buscar seus empréstimos.");
+  }
+},
   // --- REGISTRAR UMA DEVOLUÇÃO ---
    // controllers/controllerEmprestimo.js
 

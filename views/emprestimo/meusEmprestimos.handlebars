@@ -1,8 +1,35 @@
 <div class="container mt-4">
   <h2 class="mb-4">Meus Empréstimos Ativos</h2>
 
+  <div class="card card-body mb-4">
+    <h5 class="card-title">Filtros e Ordenação</h5>
+    <form action="/meus-emprestimos" method="GET" class="row g-3 align-items-end">
+      <div class="col-md-5">
+        <label for="busca" class="form-label">Buscar por Título</label>
+        <input type="text" class="form-control" name="busca" id="busca" value="{{query.busca}}" placeholder="Digite o título do livro...">
+      </div>
+      <div class="col-md-3">
+        <label for="status" class="form-label">Mostrar</label>
+        <select name="status" id="status" class="form-select">
+          <option value="">Todos</option>
+          <option value="PENDENTE" {{#if (eq query.status 'PENDENTE')}}selected{{/if}}>Pendentes</option>
+          <option value="DEVOLVIDO" {{#if (eq query.status 'DEVOLVIDO')}}selected{{/if}}>Devolvidos</option>
+          <option value="ATRASADO" {{#if (eq query.status 'ATRASADO')}}selected{{/if}}>Atrasados</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="ordenarPor" class="form-label">Ordenar por</label>
+        <select name="ordenarPor" id="ordenarPor" class="form-select">
+          <option value="recente" {{#if (eq query.ordenarPor 'recente')}}selected{{/if}}>Mais Recentes</option>
+          <option value="vencimento" {{#if (eq query.ordenarPor 'vencimento')}}selected{{/if}}>Vencimento Próximo</option>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+      </div>
+    </form>
+  </div>
   {{#if emprestimos.length}}
-    <p>Aqui estão os livros que você pegou emprestado. Cuide bem deles!</p>
     <div class="list-group shadow-sm">
       {{#each emprestimos}}
         <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -10,15 +37,19 @@
             <h5 class="mb-1">"{{Livro.titulo}}"</h5>
             <small>Emprestado em: {{formatarData data_emprestimo}}</small>
           </div>
-          <span class="badge bg-primary rounded-pill">
-            Devolver até: {{formatarData data_devolucao_prevista}}
-          </span>
+          {{#if (eq status 'PENDENTE')}}
+            <span class="badge bg-warning text-dark rounded-pill">Devolver até: {{formatarData data_devolucao_prevista}}</span>
+          {{else if (eq status 'DEVOLVIDO')}}
+            <span class="badge bg-info rounded-pill">Devolvido</span>
+          {{else if (eq status 'ATRASADO')}}
+            <span class="badge bg-danger rounded-pill">ATRASADO - Devolver até: {{formatarData data_devolucao_prevista}}</span>
+          {{/if}}
         </div>
       {{/each}}
     </div>
   {{else}}
     <div class="alert alert-info">
-      Você não possui empréstimos ativos no momento.
+      Nenhum empréstimo encontrado para os filtros aplicados.
     </div>
   {{/if}}
 

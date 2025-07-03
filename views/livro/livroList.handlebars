@@ -15,7 +15,7 @@
       <th>Título</th>
       <th>Ano</th>
       <th>Gênero</th>
-      <th>Tipo</th>
+      <th>Autor</th>
       <th>Status</th>
       <th>Ações</th>
     </tr>
@@ -26,7 +26,12 @@
       <td>{{toUpperCase titulo}}</td>
       <td>{{ano}}</td>
       <td>{{Categoria.nome}}</td>
-      <td>{{Categoria.tipo}}</td>
+      <td><ul class="list-unstyled mb-0">
+            {{#each Autores}}
+              <li>{{nome}}</li>
+            {{/each}}
+          </ul>
+          </td>
       <td>
           {{! Badge de Status para todos verem }}
           {{#if (eq status 'DISPONIVEL')}}

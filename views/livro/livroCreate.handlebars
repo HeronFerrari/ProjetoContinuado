@@ -18,24 +18,26 @@
       {{/each}}
     </select>
   </div>
-  <div class="form-group d-flex align-items-end">
-    <div style="flex:1;">
+  <div class="form-group">
       <label for="id_autor">Autor:</label>
-      <select class="form-control" name="id_autores" id="id_autores" multiple required>
-        {{#if autores.length}}
-          {{#each autores}}
-            <option value="{{id_autor}}">{{nome}}</option>
-          {{/each}}
-        {{else}}
+      <div class="input-group">
+        <select class="form-control" name="id_autores" id="id_autores" multiple required>
+          {{#if autores.length}}
+            {{#each autores}}
+              <option value="{{id_autor}}">{{nome}}</option>
+            {{/each}}
+          {{else}}
             <option disabled selected>Nenhum autor cadastrado</option>
-        {{/if}}
-      </select>
-      <small class="form-text text-muted"> Segure Ctrl (ou Cmd) para selecionar múltiplos autores.</small>
+          {{/if}}
+        </select>
+        <div class="input-group-append">
+        </div>
+      </div>
+      <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos autores.</small>
     </div>
-    <a href="/autorCreate" class="btn btn-success ml-2 mb-1" target="_blank">Cadastrar novo Autor</a>
-  </div>
   <div class="form-group d-flex justify-content-between">
     <button type="submit" class="btn btn-primary">Cadastrar Livro</button>
+    <a href="/autorCreate" class="btn btn-success" target="_blank">Novo Autor</a>
     <a href="/home" class="btn btn-secondary">Voltar</a>
   </div>
 </form>

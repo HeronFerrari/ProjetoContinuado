@@ -31,10 +31,12 @@ route.get('/home', (req, res) => {
 });
 
 route.get('/', (req, res) => {
+   if (!req.session.usuario) {
+        return res.redirect('/login');
+    }
   res.render('home', {
-    usuario: req.session.usuario
+    usuario: req.session.usuario, logado: true });
   });
-});
 
 // Controller Usuario
 route.get('/login', controllerUsuario.getLogin);

@@ -32,7 +32,7 @@ db.Emprestimo.belongsTo(db.Livro, { foreignKey: 'id_livro' });
 
 // Usuario 1:N Reserva
 db.Usuario.hasMany(db.Reserva, { foreignKey: 'id_usuario' });
-db.Reserva.belongsTo(db.Usuario, { foreignKey: 'id_usuario' });
+db.Reserva.belongsTo(db.Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
 
 // Livro 1:N Reserva
 db.Livro.hasMany(db.Reserva, { foreignKey: 'id_livro' });

@@ -2,6 +2,44 @@
   <h2 class="mb-4">Gerenciamento de Reservas</h2>
   <p>Lista de todas as reservas ativas no sistema.</p>
 
+    <div class="card card-body mb-4">
+        <h5 class="card-title">Filtrar Reservas</h5>
+        <form action="/reservaList" method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="busca" class="form-label">Buscar por Livro ou Usuário</label>
+                <input type="text" class="form-control" name="busca" id="busca" value="{{query.busca}}" placeholder="Título do livro ou nome/login do usuário...">
+            </div>
+
+            <div class="col-md-2">
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="ATIVA" {{#if (eq query.status 'ATIVA')}}selected{{/if}}>Na Fila</option>
+                    <option value="AGUARDANDO_RETIRADA" {{#if (eq query.status 'AGUARDANDO_RETIRADA')}}selected{{/if}}>Aguardando Retirada</option>
+                    <option value="ATENDIDA" {{#if (eq query.status 'ATENDIDA')}}selected{{/if}}>Atendida</option>
+                    <option value="CANCELADA" {{#if (eq query.status 'CANCELADA')}}selected{{/if}}>Cancelada</option>
+                    <option value="EXPIRADA" {{#if (eq query.status 'EXPIRADA')}}selected{{/if}}>Expirada</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="dataInicio" class="form-label">De</label>
+                <input type="date" class="form-control" name="dataInicio" id="dataInicio" value="{{query.dataInicio}}">
+            </div>
+            <div class="col-md-2">
+                <label for="dataFim" class="form-label">Até</label>
+                <input type="date" class="form-control" name="dataFim" id="dataFim" value="{{query.dataFim}}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Buscar</button>
+            </div>
+        </form>
+    </div>
+    {{#if sucesso}}
+      <div class="alert alert-success">{{sucesso}}</div>
+    {{/if}}
+
+
   {{#if reservas.length}}
     <table class="table table-hover table-bordered">
       <thead class="thead-dark">

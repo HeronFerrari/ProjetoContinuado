@@ -1,0 +1,15 @@
+/* Define a fonte e reseta margens/espaçamentos básicos para todo o app */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f7f6; /* Um cinza bem claro para o fundo do app */
+}
+
+/* Um container principal para o conteúdo das suas páginas */
+.main-content {
+  padding: 20px;
+}

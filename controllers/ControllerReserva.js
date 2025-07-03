@@ -1,4 +1,5 @@
 const db = require('../config/db_sequelize');
+const { Op, fn, col, where } = require('sequelize');
 
 module.exports = {
 
@@ -73,55 +74,120 @@ if (reservaExistente) {
     res.status(500).send('Erro ao registrar reserva.');
   }
 },
-  // --- LISTAR TODAS AS RESERVAS (ADMIN/BIBLIO) ---
- async getList(req, res) {
+  async getList(req, res) {
   if (!req.session.usuario || (req.session.usuario.tipo !== 'ADMIN' && req.session.usuario.tipo !== 'BIBLIOTECARIO')) {
     return res.redirect('/home');
   }
   try {
-    const reservas = await db.Reserva.findAll({
-      include: [
-        { 
-          model: db.Usuario, 
-          attributes: ['login', 'nome', 'sobrenome'] 
-        },
-        { 
-          model: db.Livro, as: 'Livro',
-          attributes: ['titulo'] 
+    // Pega todos os filtros da URL
+    const { busca, dataInicio, dataFim, status } = req.query;
+
+    // Inicia a cláusula 'where' principal
+    const whereClause = {
+      [Op.and]: []
+    };
+
+    // Adiciona os filtros dinamicamente
+    if (status) {
+      whereClause[Op.and].push({ status: status });
+    }
+
+    if (dataInicio && dataFim) {
+      whereClause[Op.and].push({
+        data_reserva: {
+          [Op.between]: [new Date(dataInicio), new Date(new Date(dataFim).setHours(23, 59, 59))]
         }
+      });
+    } else if (dataInicio) {
+      whereClause[Op.and].push({ data_reserva: { [Op.gte]: new Date(dataInicio) } });
+    } else if (dataFim) {
+      whereClause[Op.and].push({ data_reserva: { [Op.lte]: new Date(new Date(dataFim).setHours(23, 59, 59)) } });
+    }
+
+    if (busca) {
+      whereClause[Op.and].push({
+        [Op.or]: [
+      // 1. Busca no título do livro (continua igual)
+          { '$Livro.titulo$': { [Op.iLike]: `%${busca}%` } },
+      
+      // 2. Busca no login do usuário (continua igual)
+          { '$usuario.login$': { [Op.iLike]: `%${busca}%` } },
+
+      // 3. A NOVA BUSCA: no nome completo do usuário (concatenado)
+          where(
+            fn('CONCAT', col('usuario.nome'), ' ', col('usuario.sobrenome')),
+            { [Op.iLike]: `%${busca}%` }
+          )
+        ]
+      });
+    }
+
+    // Executa a busca com os filtros
+    const reservas = await db.Reserva.findAll({
+      where: whereClause,
+      include: [
+        { model: db.Usuario, as: 'usuario' },
+        { model: db.Livro, as: 'Livro' }
       ],
       order: [['data_reserva', 'ASC']]
     });
+
     res.render('reserva/reservaList', { 
       reservas: reservas.map(r => r.toJSON()),
-      usuario: req.session.usuario 
+      usuario: req.session.usuario,
+      query: req.query // Passa os filtros de volta para a view
     });
   } catch (err) {
     console.log(err);
     res.status(500).send('Erro ao listar reservas.');
   }
 },
-
   // --- LISTAR RESERVAS DO USUÁRIO LOGADO (LEITOR) ---
   async getMinhasReservas(req, res) {
-    if (!req.session.usuario) {
-      return res.redirect('/login');
+  if (!req.session.usuario) {
+    return res.redirect('/login');
+  }
+  try {
+    // 1. Pega os filtros da URL
+    const { busca, status } = req.query;
+
+    // 2. Monta a cláusula 'where' dinamicamente
+    const whereClause = {
+      // REGRA DE SEGURANÇA: Sempre filtra pelo ID do usuário logado
+      id_usuario: req.session.usuario.id 
+    };
+
+    // Adiciona o filtro de status, se o usuário selecionou um
+    if (status) {
+      whereClause.status = status;
     }
-    try {
-      const reservas = await db.Reserva.findAll({
-        where: { id_usuario: req.session.usuario.id },
-        include: [{ model: db.Livro, as: 'Livro', attributes: ['titulo'] }],
-        order: [['data_reserva', 'ASC']]
-      });
-      res.render('reserva/minhasReservas', { 
-        reservas: reservas.map(r => r.toJSON()),
-        usuario: req.session.usuario
-      });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send('Erro ao buscar suas reservas.');
+
+    // Adiciona o filtro de busca no título do livro, se o usuário digitou algo
+    if (busca) {
+      whereClause['$Livro.titulo$'] = { [Op.iLike]: `%${busca}%` };
     }
-  },
+
+    // 3. Executa a busca com todos os filtros
+    const reservas = await db.Reserva.findAll({
+      where: whereClause,
+      include: [{
+        model: db.Livro,
+        as: 'Livro', // Usa o 'as' que definimos na associação
+        attributes: ['titulo']
+      }],
+      order: [['data_reserva', 'DESC']] // Ordena pelas mais recentes
+    });
+
+    res.render('reserva/minhasReservas', {
+      reservas: reservas.map(r => r.toJSON()),
+      usuario: req.session.usuario,
+      query: req.query // Passa os filtros de volta para a view
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao buscar suas reservas.");
+  }
+},
 
   async postExpireReserva(req, res) {
   // Inicia uma transação segura
