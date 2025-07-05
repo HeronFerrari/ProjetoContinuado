@@ -261,10 +261,13 @@ apiRoute.post('/categorias', middlewares.verificarToken, apiControllerCategoria.
 
 //emprestimos
 apiRoute.get('/emprestimos', middlewares.verificarToken, apiControllerEmprestimo.getAll);
+apiRoute.put('/emprestimos/:id/devolver', middlewares.verificarToken, apiControllerEmprestimo.registrarDevolucao);
 
 //reservas
 apiRoute.get('/reservas', middlewares.verificarToken, apiControllerReserva.getAll);
+apiRoute.put('/reservas/:id/cancelar', middlewares.verificarToken, apiControllerReserva.cancelarReserva);
 
+//livros
 apiRoute.get('/livros', middlewares.verificarToken, apiControllerLivro.getAll);
 apiRoute.post('/livros', middlewares.verificarToken, apiControllerLivro.create);
 apiRoute.get('/livros/:id', middlewares.verificarToken, apiControllerLivro.getById);
