@@ -1,6 +1,7 @@
 const express = require ('express');
 const session = require ('express-session');
 const handlebars = require ('express-handlebars');
+const cors = require('cors');
 const routes = require ('./routers/route');
 const apiRoutes = require ('./routers/api');
 var cookieParser = require ('cookie-parser');
@@ -104,6 +105,7 @@ const swaggerDocument = {
 // Usa o objeto JavaScript diretamente, sem precisar do swagger-jsdoc
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.use(cors());
 
 app.use (express.static (__dirname + '/public'));
 app.use (cookieParser());

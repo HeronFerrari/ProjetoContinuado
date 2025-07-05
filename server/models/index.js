@@ -16,20 +16,25 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+function readModels(directory) {
+  fs.readdirSync(directory).forEach(file => {
+    const absolutePath = path.join(directory, file);
+    if (fs.statSync(absolutePath).isDirectory()) {
+      readModels(absolutePath); // Chama recursivamente para subpastas
+    } else if (file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js' && file.indexOf('.test.js') === -1
+  ) { 
+      try {
+        const model = require(absolutePath)(sequelize, Sequelize.DataTypes);
+        db[model.name] = model;
+      } catch (e) {
+        // Loga erros se um arquivo .js não for um modelo Sequelize válido
+        console.warn(`Não foi possível carregar o arquivo como modelo Sequelize: ${absolutePath}. Erro: ${e.message}`);
+      }
+    }
   });
+}
+
+readModels(__dirname);
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

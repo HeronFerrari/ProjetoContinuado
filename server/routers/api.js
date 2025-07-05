@@ -1,9 +1,12 @@
 const express = require('express');
 const apiRoute = express.Router();
 const middlewares = require('../Middlewares/middlewares'); 
-const apiControllerAutor = require('../controllers/apiControllerAutor');
 const controllerUsuario = require('../controllers/controllerUsuario');
-
+const apiControllerAutor = require('../controllers/apiControllerAutor');
+const apiControllerCategoria = require('../controllers/apiControllerCategoria');
+const apiControllerEmprestimo = require('../controllers/apiControllerEmprestimo');
+const apiControllerReserva = require('../controllers/apiControllerReserva');
+const apiControllerLivro = require('../controllers/apiControllerLivro');
 /** * @swagger
  * /api/login:
  * post:
@@ -252,5 +255,20 @@ apiRoute.delete('/autores/:id', middlewares.verificarToken, apiControllerAutor.d
  */
 apiRoute.get('/autores/:id/livros', middlewares.verificarToken, apiControllerAutor.getBooksByAuthor);
 
+//categorias
+apiRoute.get('/categorias', middlewares.verificarToken, apiControllerCategoria.getAll);
+apiRoute.post('/categorias', middlewares.verificarToken, apiControllerCategoria.create);
+
+//emprestimos
+apiRoute.get('/emprestimos', middlewares.verificarToken, apiControllerEmprestimo.getAll);
+
+//reservas
+apiRoute.get('/reservas', middlewares.verificarToken, apiControllerReserva.getAll);
+
+apiRoute.get('/livros', middlewares.verificarToken, apiControllerLivro.getAll);
+apiRoute.post('/livros', middlewares.verificarToken, apiControllerLivro.create);
+apiRoute.get('/livros/:id', middlewares.verificarToken, apiControllerLivro.getById);
+apiRoute.put('/livros/:id', middlewares.verificarToken, apiControllerLivro.update);
+apiRoute.delete('/livros/:id', middlewares.verificarToken, apiControllerLivro.delete);
 
 module.exports = apiRoute;
